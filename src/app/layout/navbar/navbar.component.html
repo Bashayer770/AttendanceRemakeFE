@@ -1,0 +1,24 @@
+<nav
+  class="bg-white shadow-lg border-b border-gray-200 navbar-container top-navbar"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 p-2 mt-2">
+    <div class="flex justify-between h-16">
+      <div class="flex items-center px-4">
+        <app-brand-logo></app-brand-logo>
+      </div>
+
+      <app-nav-menu></app-nav-menu>
+
+      <div class="flex items-center px-4">
+        <app-user-menu></app-user-menu>
+      </div>
+
+      <app-mobile-menu
+        [isMenuOpen]="isMenuOpen"
+        (toggleMenu)="toggleMenu()"
+        (closeMenu)="closeMenu()"
+      >
+      </app-mobile-menu>
+    </div>
+  </div>
+</nav>

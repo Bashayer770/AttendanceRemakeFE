@@ -1,0 +1,97 @@
+<!-- Minutes Summary Card -->
+<div class="container mx-auto px-4 py-1">
+  <div class="">
+    <h2 class="text-2xl font-bold text-black arabic-text text-right">
+      مرحباً، {{ userName }}
+      <!-- <span class="text-gray-500 text-lg">(ID: {{ empId }})</span> -->
+    </h2>
+  </div>
+
+  <!-- Timing Plan -->
+  <div *ngIf="timingPlan" class="text-right mb-6">
+    <h3 class="text-2xl font-semibold arabic-text">
+      خطة الدوام: {{ timingPlan.descA }}
+    </h3>
+    <p class="text-xl text-gray-600 arabic-text">
+      من: {{ getTimeAsDate(timingPlan.fromTime) | date : "h:mm a" }} - إلى:
+      {{ getTimeAsDate(timingPlan.toTime) | date : "h:mm a" }}
+    </p>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg p-4">
+    <div
+      class="flex justify-between items-start arabic-text text-xl divide-x-3 divide-gray-100 px-2"
+    >
+      <!-- Total Minutes -->
+      <div
+        class="flex flex-col items-center justify-center p-2 w-1/3 text-center"
+      >
+        <div class="mb-3">
+          <app-home-total-minutes-svg></app-home-total-minutes-svg>
+        </div>
+        <span class="text-gray-500 text-2xl">الدقائق الكلية</span>
+        <span class="font-semibold text-4xl">720</span>
+      </div>
+      <!-- User ID -->
+      <div
+        class="flex flex-col items-center justify-center p-2 w-1/3 text-center"
+      >
+        <div class="mb-3">
+          <app-home-user-id-svg></app-home-user-id-svg>
+        </div>
+        <span class="text-gray-500 text-2xl">رقم المستخدم</span>
+        <span class="font-semibold text-4xl text-black">{{ fingerCode }}</span>
+      </div>
+      <!-- Remaining Minutes -->
+      <div
+        class="flex flex-col items-center justify-center p-2 w-1/3 text-center"
+      >
+        <div class="mb-3">
+          <app-home-remaining-minutes-svg></app-home-remaining-minutes-svg>
+        </div>
+        <span class="text-gray-500 text-2xl">المتبقي</span>
+        <span
+          class="font-semibold text-4xl"
+          [ngClass]="{ 'text-red-500': remainingMinutes < 0 }"
+          >{{ remainingMinutes }}</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Card -->
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="overflow-y-auto max-h-96">
+      <table class="w-full arabic-text table-fixed">
+        <thead class="bg-primary text-white sticky top-0 z-10">
+          <tr>
+            <th class="px-6 py-4 text-right text-xl">نوع العملية</th>
+            <th class="px-6 py-4 text-right text-xl">التاريخ</th>
+            <th class="px-6 py-4 text-right text-xl">من</th>
+            <th class="px-6 py-4 text-right text-xl">إلى</th>
+            <th class="px-6 py-4 text-right text-xl">خصم</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          @for (row of data; track $index) {
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-lg">
+              {{ TransactionTypeLabels[row.transactionType] }}
+            </td>
+            <td class="px-6 py-4 text-lg">
+              {{ row.date | date : "dd/MM/yyyy" }}
+            </td>
+            <td class="px-6 py-4 text-lg">
+              {{ convertTimeStringToDate(row.fromTime) | date : "h:mm a" }}
+            </td>
+            <td class="px-6 py-4 text-lg">
+              {{ convertTimeStringToDate(row.toTime) | date : "h:mm a" }}
+            </td>
+            <td class="px-6 py-4 text-lg">{{ row.minutes }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

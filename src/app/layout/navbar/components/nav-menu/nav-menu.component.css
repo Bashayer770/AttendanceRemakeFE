@@ -1,0 +1,11 @@
+/* Navigation menu specific styles */
+
+/* Ensure dropdown doesn't block hover leave when hidden */
+.group:hover .group-hover\:visible {
+  pointer-events: auto;
+}
+
+/* Optional: smoother panel reveal */
+.group .group-hover\:opacity-100 {
+  transition: opacity 150ms ease;
+}

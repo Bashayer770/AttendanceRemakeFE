@@ -1,0 +1,20 @@
+<app-modal [isVisible]="isVisible" (close)="onClose()" [title]="'تأكيد الحذف'">
+  <p class="text-center text-black text-lg font-medium">
+    هل أنت متأكد أنك تريد حذف هذا الموقع؟
+  </p>
+
+  <div class="flex justify-center mt-6 gap-4">
+    <button
+      class="px-4 py-2 bg-gray-400 text-white rounded"
+      (click)="onClose()"
+    >
+      إلغاء
+    </button>
+    <button
+      class="px-4 py-2 bg-red-600 text-white rounded"
+      (click)="onConfirm()"
+    >
+      نعم
+    </button>
+  </div>
+</app-modal>

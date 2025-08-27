@@ -1,0 +1,78 @@
+<div class="hidden md:flex items-center space-x-8 rtl:space-x-reverse px-4">
+  <a
+    routerLink="/"
+    routerLinkActive="text-primary"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="text-gray-700 hover:text-primary px-4 py-3 rounded-md text-base font-medium transition-colors duration-200 arabic-text"
+  >
+    صفحه الرئيسيه
+  </a>
+
+  <div class="relative group">
+    <button
+      class="text-gray-700 hover:text-primary px-4 py-3 rounded-md text-base font-medium transition-colors duration-200 arabic-text flex items-center gap-1"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
+      التعريفات
+      <svg
+        class="h-4 w-4 transition-transform duration-200 group-hover:rotate-180"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 9l-7 7-7-7"
+        />
+      </svg>
+    </button>
+
+    <!-- Apple-like dropdown panel extending from navbar -->
+    <div
+      class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-200 absolute left-1/2 -translate-x-1/2 top-full -mt-px w-screen max-w-none z-50"
+    >
+      <div
+        class="shadow-2xl bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60 rounded-none"
+      >
+        <div
+          class="w-full py-4 px-0 grid grid-cols-1 sm:grid-cols-3 gap-2 justify-items-center"
+        >
+          <a
+            routerLink="/locations"
+            routerLinkActive="text-primary"
+            class="flex flex-col items-center justify-center gap-2 rounded-lg px-3 py-3 hover:bg-gray-100 transition-colors duration-150 text-center"
+          >
+            <span class="text-base arabic-text text-gray-900">المواقع</span>
+          </a>
+          <a
+            routerLink="/dashboard"
+            routerLinkActive="text-primary"
+            class="flex flex-col items-center justify-center gap-2 rounded-lg px-3 py-3 hover:bg-gray-100 transition-colors duration-150 text-center"
+          >
+            <span class="text-base arabic-text text-gray-900"
+              >أجهزه البصمه</span
+            >
+          </a>
+          <a
+            routerLink="/reports"
+            routerLinkActive="text-primary"
+            class="flex flex-col items-center justify-center gap-2 rounded-lg px-3 py-3 hover:bg-gray-100 transition-colors duration-150 text-center"
+          >
+            <span class="text-base arabic-text text-gray-900">الادارات</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a
+    routerLink="/work-schedules"
+    routerLinkActive="text-primary"
+    class="text-gray-700 hover:text-primary px-4 py-3 rounded-md text-base font-medium transition-colors duration-200 arabic-text"
+  >
+    مواعيد العمل
+  </a>
+</div>

@@ -1,0 +1,17 @@
+<div class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50" *ngIf="isVisible">
+
+<div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-lg relative z-50">
+
+
+<button (click)="onClose()" class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl ">
+&times;
+</button>
+
+<h2 class="text-xl font-semibold mb-4 text-center">{{title}}</h2>
+
+<ng-content></ng-content>
+
+
+</div>
+
+</div>

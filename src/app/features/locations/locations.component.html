@@ -1,0 +1,94 @@
+<div
+  class="flex flex-col items-center justify-start  bg-gray-50 arabic-text"
+>
+  <div class="w-full max-w-7xl bg-white shadow-lg px-8 pb-4 rounded-lg">
+    <div
+      class="bg-primary text-white text-center py-4  rounded-t-lg -mx-8 -mt-2 mb-8"
+    >
+      <h2 class="text-3xl font-sans arabic-text">إدارة المواقع</h2>
+    </div>
+
+    <div class="flex justify-between items-center mb-6 gap-4">
+      <!-- Search -->
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearch()"
+        placeholder="ابحث عن الموقع"
+        class="w-full px-6 py-3 border-b-2 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:bg-white hover:bg-slate-100 arabic-text"
+      />
+
+      <button
+        (click)="openAddModal()"
+        class="ml-4 w-36 bg-primary text-white py-3 px-6 rounded-lg hover:bg-primary/80 arabic-text"
+      >
+        إضافة موقع
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-hidden rounded-lg shadow-sm border border-gray-200">
+      <table class="min-w-full">
+        <thead class="bg-primary">
+          <tr>
+            <th
+              class="py-3 px-6 text-right text-white font-semibold arabic-text"
+            >
+              الاسم الإنجليزي
+            </th>
+            <th
+              class="py-3 px-6 text-right text-white font-semibold arabic-text"
+            >
+              الاسم العربي
+            </th>
+            <th
+              class="py-3 px-6 text-center text-white font-semibold arabic-text"
+            >
+              الإجراءات
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <tr *ngIf="filteredLocations.length === 0">
+            <td colspan="3" class="text-center py-6 text-gray-400">
+              لا توجد بيانات
+            </td>
+          </tr>
+
+          <tr *ngFor="let location of filteredLocations">
+            <td class="py-3 px-6 arabic-text">{{ location.descE }}</td>
+            <td class="py-3 px-6 arabic-text">{{ location.descA }}</td>
+            <td class="py-3 px-6 flex gap-2 justify-center">
+              
+              <app-edit-square
+                (click)="openEditModal(location)"
+                class="w-10 h-10 px-4 py-3 text-primary cursor-pointer hover:text-cyan-700"></app-edit-square>
+              <app-delete-filled                
+               (click)="openDeleteModal(location.code)"
+               class="w-10 h-10 px-4 py-3 text-red-600 cursor-pointer  hover:text-red-400"></app-delete-filled>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <app-add-location-modal
+    [isVisible]="isAddModalVisible"
+    (close)="closeAddModal()"
+    (submit)="onAddSubmit($event)"
+  ></app-add-location-modal>
+
+  <app-edit-location-modal
+    [isVisible]="isEditModalVisible"
+    [location]="editingLocation"
+    (close)="closeEditModal()"
+    (submit)="onEditSubmit($event)"
+  ></app-edit-location-modal>
+
+  <app-delete-location-modal
+    [isVisible]="isDeleteModalVisible"
+    (close)="closeDeleteModal()"
+    (confirm)="confirmDelete()"
+  ></app-delete-location-modal>
+</div>

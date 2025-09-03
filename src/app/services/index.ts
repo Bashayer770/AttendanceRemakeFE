@@ -1,4 +1,5 @@
 const BASE_URL = 'https://localhost:7092/api';
+const ROOT_URL = 'https://localhost:7092';
 
 export const API = {
   LOCATIONS: {
@@ -17,5 +18,25 @@ export const API = {
       `${BASE_URL}/Floors/${encodeURIComponent(floor)}`,
     SEARCH: (query: string) =>
       `${BASE_URL}/Floors/search?query=${encodeURIComponent(query)}`,
+  },
+
+  NODES: {
+    GET_ALL: `${ROOT_URL}/Nodes/GetNodeList`,
+    GET_BY_SERIAL: (serial: string) =>
+      `${ROOT_URL}/Nodes/GetNodeBySerial?serial=${encodeURIComponent(serial)}`,
+    CREATE: `${ROOT_URL}/Nodes/AddNewNode`,
+  },
+
+  ATTENDANCE: {
+    GET_ATTENDANCE_RECORD: (startDate: string, endDate: string) =>
+      `${BASE_URL}/Attendances/GetAttendanceRecord?startDate=${encodeURIComponent(
+        startDate
+      )}&EndDate=${encodeURIComponent(endDate)}`,
+    GET_LATE_RECORD: (user: string, startDate: string, endDate: string) =>
+      `${BASE_URL}/Attendances/GetLateRecord?user=${encodeURIComponent(
+        user
+      )}&startDate=${encodeURIComponent(
+        startDate
+      )}&EndDate=${encodeURIComponent(endDate)}`,
   },
 };

@@ -1,0 +1,19 @@
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-4">
+    <h2 class="text-xl font-semibold mb-4 arabic-text">تأكيد الحذف</h2>
+    <p class="mb-4">
+      هل أنت متأكد من حذف الجهاز ذو الرقم:
+      <span class="font-mono">{{ node.serialNo }}</span
+      >؟
+    </p>
+    <div class="mt-4 flex justify-end gap-2">
+      <button class="px-4 py-2" (click)="onCancel()">إلغاء</button>
+      <button
+        class="bg-red-600 text-white px-4 py-2 rounded"
+        (click)="onConfirm()"
+      >
+        حذف
+      </button>
+    </div>
+  </div>
+</div>

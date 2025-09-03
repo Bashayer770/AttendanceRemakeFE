@@ -76,7 +76,7 @@
           المواقع
         </a>
         <a
-          routerLink="/dashboard"
+          routerLink="/nodes"
           (click)="onCloseMenu()"
           routerLinkActive="text-primary bg-primary/10"
           class="block px-3 py-2 rounded-md text-base text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors duration-200 arabic-text"
@@ -94,13 +94,76 @@
       </div>
     </details>
 
-    <a
-      routerLink="/work-schedules"
-      (click)="onCloseMenu()"
-      routerLinkActive="text-primary bg-primary/10"
-      class="text-gray-700 hover:text-primary hover:bg-primary/5 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 arabic-text"
-    >
-      مواعيد العمل
-    </a>
+    <!-- Employees -->
+    <details class="px-1" dir="rtl">
+      <summary
+        class="list-none flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors duration-200 arabic-text cursor-pointer"
+      >
+        موظفيين
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </summary>
+      <div class="mt-1 space-y-1 pr-4">
+        <a
+          routerLink="/employees/info"
+          (click)="onCloseMenu()"
+          routerLinkActive="text-primary bg-primary/10"
+          class="block px-3 py-2 rounded-md text-base text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors duration-200 arabic-text"
+        >
+          بيانات الموظف
+        </a>
+      </div>
+    </details>
+
+    <!-- Work schedules -->
+    <details class="px-1" dir="rtl">
+      <summary
+        class="list-none flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors duration-200 arabic-text cursor-pointer"
+      >
+        مواعيد العمل
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </summary>
+      <div class="mt-1 space-y-1 pr-4">
+        <a
+          routerLink="/work-schedules/exceptional-exit"
+          (click)="onCloseMenu()"
+          routerLinkActive="text-primary bg-primary/10"
+          class="block px-3 py-2 rounded-md text-base text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors duration-200 arabic-text"
+        >
+          خروج استثنائي
+        </a>
+        <a
+          routerLink="/work-schedules/fixed"
+          (click)="onCloseMenu()"
+          routerLinkActive="text-primary bg-primary/10"
+          class="block px-3 py-2 rounded-md text-base text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors duration-200 arabic-text"
+        >
+          مواعيد العمل الثابته
+        </a>
+      </div>
+    </details>
   </div>
 </div>

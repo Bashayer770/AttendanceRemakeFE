@@ -1,0 +1,41 @@
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-4">
+    <h2 class="text-xl font-semibold mb-4 arabic-text">تعديل الجهاز</h2>
+    <div class="space-y-3">
+      <input
+        class="w-full border rounded px-3 py-2"
+        [value]="node.serialNo"
+        placeholder="Serial No"
+      />
+      <input
+        class="w-full border rounded px-3 py-2"
+        [value]="node.descA"
+        placeholder="الوصف (AR)"
+      />
+      <input
+        class="w-full border rounded px-3 py-2"
+        [value]="node.descE"
+        placeholder="Description (EN)"
+      />
+      <input
+        class="w-full border rounded px-3 py-2"
+        [value]="node.locCode"
+        placeholder="Location Code"
+      />
+      <input
+        class="w-full border rounded px-3 py-2"
+        [value]="node.floor || ''"
+        placeholder="Floor"
+      />
+    </div>
+    <div class="mt-4 flex justify-end gap-2">
+      <button class="px-4 py-2" (click)="onCancel()">إلغاء</button>
+      <button
+        class="bg-primary text-white px-4 py-2 rounded"
+        (click)="onSave()"
+      >
+        حفظ
+      </button>
+    </div>
+  </div>
+</div>

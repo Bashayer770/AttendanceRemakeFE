@@ -10,8 +10,8 @@
       <!-- Search -->
       <input
         type="text"
-        [(ngModel)]="searchQuery"
-        (ngModelChange)="onSearch()"
+        [value]="searchQuery"
+        (input)="onSearchInput($event)"
         placeholder="ابحث عن الجهاز"
         class="w-full px-6 py-3 border-b-2 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:bg-white hover:bg-slate-100 arabic-text"
       />
@@ -92,7 +92,7 @@
 
   <app-add-node-modal
     *ngIf="isAddModalVisible"
-    (close)="closeAddModal()"
+    (close)="closeAddModal($event)"
   ></app-add-node-modal>
 
   <app-edit-node-modal
@@ -106,7 +106,7 @@
         floor: null
       }
     "
-    (close)="closeEditModal()"
+    (close)="closeEditModal($event)"
   ></app-edit-node-modal>
 
   <app-delete-node-modal
@@ -118,6 +118,6 @@
       locCode: 0,
       floor: null
     }"
-    (close)="closeDeleteModal()"
+    (close)="closeDeleteModal($event)"
   ></app-delete-node-modal>
 </div>

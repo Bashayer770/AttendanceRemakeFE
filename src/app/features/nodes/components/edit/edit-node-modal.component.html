@@ -1,41 +1,89 @@
 <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
   <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-4">
     <h2 class="text-xl font-semibold mb-4 arabic-text">تعديل الجهاز</h2>
-    <div class="space-y-3">
-      <input
-        class="w-full border rounded px-3 py-2"
-        [value]="node.serialNo"
-        placeholder="Serial No"
-      />
-      <input
-        class="w-full border rounded px-3 py-2"
-        [value]="node.descA"
-        placeholder="الوصف (AR)"
-      />
-      <input
-        class="w-full border rounded px-3 py-2"
-        [value]="node.descE"
-        placeholder="Description (EN)"
-      />
-      <input
-        class="w-full border rounded px-3 py-2"
-        [value]="node.locCode"
-        placeholder="Location Code"
-      />
-      <input
-        class="w-full border rounded px-3 py-2"
-        [value]="node.floor || ''"
-        placeholder="Floor"
-      />
-    </div>
-    <div class="mt-4 flex justify-end gap-2">
-      <button class="px-4 py-2" (click)="onCancel()">إلغاء</button>
-      <button
-        class="bg-primary text-white px-4 py-2 rounded"
-        (click)="onSave()"
-      >
-        حفظ
-      </button>
-    </div>
+
+    <form [formGroup]="nodeForm" (ngSubmit)="onSave()">
+      <div class="space-y-3">
+        <div>
+          <input
+            class="w-full border rounded px-3 py-2 bg-gray-100"
+            formControlName="serialNo"
+            placeholder="Serial No"
+            readonly
+          />
+        </div>
+
+        <div>
+          <input
+            class="w-full border rounded px-3 py-2"
+            formControlName="descA"
+            placeholder="الوصف (AR)"
+          />
+          <div
+            *ngIf="
+              nodeForm.get('descA')?.touched && nodeForm.get('descA')?.invalid
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            الوصف العربي مطلوب
+          </div>
+        </div>
+
+        <div>
+          <input
+            class="w-full border rounded px-3 py-2"
+            formControlName="descE"
+            placeholder="Description (EN)"
+          />
+          <div
+            *ngIf="
+              nodeForm.get('descE')?.touched && nodeForm.get('descE')?.invalid
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            الوصف الإنجليزي مطلوب
+          </div>
+        </div>
+
+        <div>
+          <input
+            class="w-full border rounded px-3 py-2"
+            type="number"
+            formControlName="locCode"
+            placeholder="Location Code"
+          />
+          <div
+            *ngIf="
+              nodeForm.get('locCode')?.touched &&
+              nodeForm.get('locCode')?.invalid
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            كود الموقع مطلوب
+          </div>
+        </div>
+
+        <div>
+          <input
+            class="w-full border rounded px-3 py-2"
+            formControlName="floor"
+            placeholder="Floor"
+          />
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end gap-2">
+        <button type="button" class="px-4 py-2" (click)="onCancel()">
+          إلغاء
+        </button>
+        <button
+          type="submit"
+          class="bg-primary text-white px-4 py-2 rounded"
+          [disabled]="nodeForm.invalid"
+        >
+          حفظ
+        </button>
+      </div>
+    </form>
   </div>
 </div>

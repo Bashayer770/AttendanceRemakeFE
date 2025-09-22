@@ -8,11 +8,12 @@ import {
 } from '@angular/forms';
 import { NodeService } from '../../../../services/nodes/nodeService';
 import { NodeModel } from '../../../../models/node';
+import { ModalComponent } from '../../../locations/components/modal/modal.component';
 
 @Component({
   selector: 'app-add-node-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ModalComponent],
   templateUrl: './add-node-modal.component.html',
   styleUrls: ['./add-node-modal.component.css'],
 })

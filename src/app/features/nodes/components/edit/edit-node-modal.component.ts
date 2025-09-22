@@ -8,11 +8,12 @@ import {
 } from '@angular/forms';
 import { NodeService } from '../../../../services/nodes/nodeService';
 import { NodeModel } from '../../../../models/node';
+import { ModalComponent } from '../../../locations/components/modal/modal.component';
 
 @Component({
   selector: 'app-edit-node-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ModalComponent],
   templateUrl: './edit-node-modal.component.html',
   styleUrls: ['./edit-node-modal.component.css'],
 })
@@ -33,7 +34,6 @@ export class EditNodeModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Populate form with existing node data
     this.nodeForm.patchValue({
       serialNo: this.node.serialNo,
       descA: this.node.descA,
@@ -49,33 +49,22 @@ export class EditNodeModalComponent implements OnInit {
 
   onSave() {
     if (this.nodeForm.valid) {
-      const nodeData: NodeModel = {
-        serialNo: this.node.serialNo, // Keep original serial number
+      const payload: NodeModel = {
+        serialNo: this.node.serialNo,
         descA: this.nodeForm.get('descA')?.value,
         descE: this.nodeForm.get('descE')?.value,
         locCode: this.nodeForm.get('locCode')?.value,
         floor: this.nodeForm.get('floor')?.value,
       };
-
-      this.nodeService.update(this.node.serialNo, nodeData).subscribe({
-        next: () => {
-          this.close.emit(true);
-        },
+      this.nodeService.update(this.node.serialNo, payload).subscribe({
+        next: () => this.close.emit(true),
         error: (err) => {
           console.error('Failed to update node', err);
           alert('فشل في تحديث الجهاز');
         },
       });
     } else {
-      this.markFormGroupTouched();
-      alert('يرجى ملء جميع الحقول المطلوبة بشكل صحيح');
+      Object.values(this.nodeForm.controls).forEach((c) => c.markAsTouched());
     }
-  }
-
-  private markFormGroupTouched() {
-    Object.keys(this.nodeForm.controls).forEach((key) => {
-      const control = this.nodeForm.get(key);
-      control?.markAsTouched();
-    });
   }
 }

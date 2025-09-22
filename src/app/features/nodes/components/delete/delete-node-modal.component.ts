@@ -2,11 +2,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NodeService } from '../../../../services/nodes/nodeService';
 import { NodeModel } from '../../../../models/node';
+import { ModalComponent } from '../../../locations/components/modal/modal.component';
 
 @Component({
   selector: 'app-delete-node-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ModalComponent],
   templateUrl: './delete-node-modal.component.html',
   styleUrls: ['./delete-node-modal.component.css'],
 })

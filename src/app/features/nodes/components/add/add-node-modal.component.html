@@ -1,97 +1,93 @@
-<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-  <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-4">
-    <h2 class="text-xl font-semibold mb-4 arabic-text">إضافة جهاز جديد</h2>
+<app-modal [isVisible]="true" [title]="'إضافة جهاز'" (close)="onCancel()">
+  <form
+    [formGroup]="nodeForm"
+    (ngSubmit)="onSave()"
+    class="flex flex-col gap-4"
+  >
+    <label class="font-semibold text-gray-700 arabic-text">
+      رقم الجهاز
+      <input
+        formControlName="serialNo"
+        class="mt-1 w-full border-b-2 rounded-lg p-3 shadow-sm focus:outline-none hover:bg-slate-100 arabic-text"
+        placeholder="Serial No"
+      />
+    </label>
+    <div
+      *ngIf="
+        nodeForm.get('serialNo')?.touched && nodeForm.get('serialNo')?.invalid
+      "
+      class="text-red-500 arabic-text text-sm"
+    >
+      رقم الجهاز مطلوب
+    </div>
 
-    <form [formGroup]="nodeForm" (ngSubmit)="onSave()">
-      <div class="space-y-3">
-        <div>
-          <input
-            class="w-full border rounded px-3 py-2"
-            placeholder="Serial No"
-            formControlName="serialNo"
-          />
-          <div
-            *ngIf="
-              nodeForm.get('serialNo')?.touched &&
-              nodeForm.get('serialNo')?.invalid
-            "
-            class="text-red-500 text-sm mt-1"
-          >
-            رقم الجهاز مطلوب
-          </div>
-        </div>
+    <label class="font-semibold text-gray-700 arabic-text">
+      الاسم العربي
+      <input
+        formControlName="descA"
+        class="mt-1 w-full border-b-2 rounded-lg p-3 shadow-sm focus:outline-none hover:bg-slate-100 arabic-text"
+      />
+    </label>
+    <div
+      *ngIf="nodeForm.get('descA')?.touched && nodeForm.get('descA')?.invalid"
+      class="text-red-500 arabic-text text-sm"
+    >
+      الاسم العربي مطلوب
+    </div>
 
-        <div>
-          <input
-            class="w-full border rounded px-3 py-2"
-            placeholder="الوصف (AR)"
-            formControlName="descA"
-          />
-          <div
-            *ngIf="
-              nodeForm.get('descA')?.touched && nodeForm.get('descA')?.invalid
-            "
-            class="text-red-500 text-sm mt-1"
-          >
-            الوصف العربي مطلوب
-          </div>
-        </div>
+    <label class="font-semibold text-gray-700 arabic-text">
+      الاسم الإنجليزي
+      <input
+        formControlName="descE"
+        class="mt-1 w-full border-b-2 rounded-lg p-3 shadow-sm focus:outline-none hover:bg-slate-100 arabic-text"
+      />
+    </label>
+    <div
+      *ngIf="nodeForm.get('descE')?.touched && nodeForm.get('descE')?.invalid"
+      class="text-red-500 arabic-text text-sm"
+    >
+      الاسم الإنجليزي مطلوب
+    </div>
 
-        <div>
-          <input
-            class="w-full border rounded px-3 py-2"
-            placeholder="Description (EN)"
-            formControlName="descE"
-          />
-          <div
-            *ngIf="
-              nodeForm.get('descE')?.touched && nodeForm.get('descE')?.invalid
-            "
-            class="text-red-500 text-sm mt-1"
-          >
-            الوصف الإنجليزي مطلوب
-          </div>
-        </div>
+    <label class="font-semibold text-gray-700 arabic-text">
+      كود الموقع
+      <input
+        formControlName="locCode"
+        type="number"
+        class="mt-1 w-full border-b-2 rounded-lg p-3 shadow-sm focus:outline-none hover:bg-slate-100 arabic-text"
+      />
+    </label>
+    <div
+      *ngIf="
+        nodeForm.get('locCode')?.touched && nodeForm.get('locCode')?.invalid
+      "
+      class="text-red-500 arabic-text text-sm"
+    >
+      كود الموقع مطلوب
+    </div>
 
-        <div>
-          <input
-            class="w-full border rounded px-3 py-2"
-            placeholder="Location Code"
-            type="number"
-            formControlName="locCode"
-          />
-          <div
-            *ngIf="
-              nodeForm.get('locCode')?.touched &&
-              nodeForm.get('locCode')?.invalid
-            "
-            class="text-red-500 text-sm mt-1"
-          >
-            كود الموقع مطلوب
-          </div>
-        </div>
+    <label class="font-semibold text-gray-700 arabic-text">
+      الدور
+      <input
+        formControlName="floor"
+        class="mt-1 w-full border-b-2 rounded-lg p-3 shadow-sm focus:outline-none hover:bg-slate-100 arabic-text"
+      />
+    </label>
 
-        <div>
-          <input
-            class="w-full border rounded px-3 py-2"
-            placeholder="Floor"
-            formControlName="floor"
-          />
-        </div>
-      </div>
-
-      <div class="mt-4 flex justify-end gap-2">
-        <button type="button" class="px-4 py-2" (click)="onCancel()">
-          إلغاء
-        </button>
-        <button
-          type="submit"
-          class="bg-primary text-white px-4 py-2 rounded"
-          [disabled]="nodeForm.invalid"
-        >
-          حفظ
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+    <div class="flex justify-center gap-4 mt-6">
+      <button
+        type="submit"
+        class="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary/80 arabic-text"
+      >
+        إضافة
+      </button>
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="w-full bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 arabic-text"
+      >
+        إغلاق
+      </button>
+    </div>
+  </form>
+</app-modal>

@@ -19,4 +19,12 @@ export class NodeService {
   create(node: NodeModel): Observable<void> {
     return this.http.post<void>(API.NODES.CREATE, node);
   }
+
+  update(serial: string, node: NodeModel): Observable<void> {
+    return this.http.put<void>(API.NODES.UPDATE(serial), node);
+  }
+
+  delete(serial: string): Observable<void> {
+    return this.http.delete<void>(API.NODES.DELETE(serial));
+  }
 }

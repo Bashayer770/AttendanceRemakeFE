@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { NodeService } from '../../services/nodes/nodeService';
 import { NodeModel } from '../../models/node';
 import { AddNodeModalComponent } from './components/add/add-node-modal.component';
@@ -14,7 +13,6 @@ import { DeleteFilledComponent } from '../../../assets/SVG/deleteSVG.component';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     AddNodeModalComponent,
     EditNodeModalComponent,
     DeleteNodeModalComponent,
@@ -52,6 +50,12 @@ export class NodesComponent implements OnInit {
     });
   }
 
+  onSearchInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchQuery = target.value;
+    this.onSearch();
+  }
+
   onSearch(): void {
     const q = this.searchQuery.toLowerCase();
     this.filteredNodes = this.allNodes.filter(
@@ -78,17 +82,26 @@ export class NodesComponent implements OnInit {
     this.isDeleteModalVisible = true;
   }
 
-  closeAddModal(): void {
+  closeAddModal(success?: boolean): void {
     this.isAddModalVisible = false;
+    if (success) {
+      this.fetchAll();
+    }
   }
 
-  closeEditModal(): void {
+  closeEditModal(success?: boolean): void {
     this.isEditModalVisible = false;
     this.editingNode = null;
+    if (success) {
+      this.fetchAll();
+    }
   }
 
-  closeDeleteModal(): void {
+  closeDeleteModal(success?: boolean): void {
     this.isDeleteModalVisible = false;
     this.serialToDelete = null;
+    if (success) {
+      this.fetchAll();
+    }
   }
 }

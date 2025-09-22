@@ -25,6 +25,10 @@ export const API = {
     GET_BY_SERIAL: (serial: string) =>
       `${ROOT_URL}/Nodes/GetNodeBySerial?serial=${encodeURIComponent(serial)}`,
     CREATE: `${ROOT_URL}/Nodes/AddNewNode`,
+    UPDATE: (serial: string) =>
+      `${ROOT_URL}/Nodes/UpdateNode/${encodeURIComponent(serial)}`,
+    DELETE: (serial: string) =>
+      `${ROOT_URL}/Nodes/DeleteNode/${encodeURIComponent(serial)}`,
   },
 
   ATTENDANCE: {

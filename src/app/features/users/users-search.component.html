@@ -56,15 +56,15 @@
               </div>
               <hr class="my-2" />
               <div class="text-sm text-gray-600">
-                <span class="font-semibold">fingerCode:</span>
+                <span class="font-semibold">البصمه:</span>
                 {{ d.fingerCode ?? "-" }}
               </div>
               <div class="text-sm text-gray-600">
-                <span class="font-semibold">timingPlan:</span>
+                <span class="font-semibold">فتره الدوام:</span>
                 {{ d.timingCode ?? "-" }}
               </div>
               <div class="text-sm text-gray-600">
-                <span class="font-semibold">hasAllow:</span>
+                <span class="font-semibold">تخفيف:</span>
                 {{
                   d.hasAllow === true
                     ? "نعم"
@@ -74,22 +74,22 @@
                 }}
               </div>
               <div class="text-sm text-gray-600">
-                <span class="font-semibold">status:</span> {{ d.status ?? "-" }}
+                <span class="font-semibold">الحاله:</span> {{ d.status ?? "-" }}
               </div>
               <div class="text-sm text-gray-600">
-                <span class="font-semibold">inLeave:</span>
+                <span class="font-semibold">لديه اذن:</span>
                 {{
                   d.inLeave === true ? "نعم" : d.inLeave === false ? "لا" : "-"
                 }}
               </div>
               <div class="text-sm text-gray-600">
-                <span class="font-semibold">hasPass:</span>
+                <span class="font-semibold">تصريح:</span>
                 {{
                   d.hasPass === true ? "نعم" : d.hasPass === false ? "لا" : "-"
                 }}
               </div>
               <div class="text-sm text-gray-600">
-                <span class="font-semibold">locCode:</span>
+                <span class="font-semibold">الموقع:</span>
                 {{ d.locCode ?? "-" }}
               </div>
             </div>

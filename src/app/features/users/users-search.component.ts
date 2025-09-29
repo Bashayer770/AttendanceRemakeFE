@@ -19,6 +19,7 @@ interface SearchForm {
 }
 
 interface EmployeeVM {
+  //API Fields
   empNo: number | null;
   name: string | null;
   role?: string | null;
@@ -89,7 +90,6 @@ export class UsersSearchComponent {
             deptName: info.deptName ?? null,
             sectorName: info.sectorName ?? null,
           };
-          // enrich backend fields
           this.fetchBackendDetails(info.empNo);
           return;
         }

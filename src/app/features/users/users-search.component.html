@@ -20,12 +20,50 @@
     <div *ngIf="loading" class="text-center text-gray-500">...جاري البحث</div>
     <div *ngIf="error" class="text-center text-red-600">{{ error }}</div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
-      <!-- Results list / card -->
-      <div class="lg:col-span-2">
+    <!-- Two-column layout: left = details, right = fetched user card -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start" dir="ltr">
+      <!-- Static details panel (left) -->
+      <div class="lg:col-start-1 lg:col-span-1">
+        <div
+          *ngIf="showDetails"
+          class="bg-white border rounded-xl shadow p-5 min-h-[260px]"
+          dir="rtl"
+        >
+          <h3 class="text-xl font-semibold mb-3">تفاصيل الموظف</h3>
+          <ng-container *ngIf="vm as d; else noDetails">
+            <div class="space-y-2 text-gray-800">
+              <div>
+                <span class="font-semibold">الاسم:</span> {{ d.name || "-" }}
+              </div>
+              <div>
+                <span class="font-semibold">الرقم الوظيفي:</span>
+                {{ d.empNo || "-" }}
+              </div>
+              <div>
+                <span class="font-semibold">الوظيفة:</span> {{ d.role || "-" }}
+              </div>
+              <div>
+                <span class="font-semibold">القسم:</span>
+                {{ d.deptName || "-" }}
+              </div>
+              <div>
+                <span class="font-semibold">القطاع:</span>
+                {{ d.sectorName || "-" }}
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #noDetails>
+            <div class="text-gray-400">لا توجد تفاصيل للعرض</div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Fetched user card (right) -->
+      <div class="lg:col-start-2 lg:col-span-2">
         <div
           *ngIf="vm as r"
-          class="border rounded-lg shadow-sm p-4 hover:bg-gray-50 cursor-pointer"
+          class="border rounded-lg shadow-sm p-4 bg-white cursor-pointer"
+          dir="rtl"
           (click)="openDetails()"
         >
           <div class="flex items-center justify-between">
@@ -43,55 +81,9 @@
         <div
           *ngIf="!vm && !loading && !error"
           class="text-center text-gray-400 py-8"
+          dir="rtl"
         >
           لا توجد بيانات
-        </div>
-      </div>
-
-      <!-- Slide-in details panel -->
-      <div class="lg:col-span-1">
-        <div class="relative">
-          <div
-            class="transition-all duration-300"
-            [class.translate-x-0]="showDetails"
-            [class.translate-x-full]="!showDetails"
-          >
-            <div
-              class="fixed right-4 top-28 w-full max-w-sm bg-white border rounded-xl shadow-2xl p-5"
-              *ngIf="showDetails && vm as d"
-            >
-              <div class="flex justify-between items-center mb-3">
-                <h3 class="text-xl font-semibold">تفاصيل الموظف</h3>
-                <button
-                  class="text-gray-500 hover:text-red-600 text-2xl"
-                  (click)="closeDetails()"
-                >
-                  &times;
-                </button>
-              </div>
-              <div class="space-y-2 text-gray-800">
-                <div>
-                  <span class="font-semibold">الاسم:</span> {{ d.name || "-" }}
-                </div>
-                <div>
-                  <span class="font-semibold">الرقم الوظيفي:</span>
-                  {{ d.empNo || "-" }}
-                </div>
-                <div>
-                  <span class="font-semibold">الوظيفة:</span>
-                  {{ d.role || "-" }}
-                </div>
-                <div>
-                  <span class="font-semibold">القسم:</span>
-                  {{ d.deptName || "-" }}
-                </div>
-                <div>
-                  <span class="font-semibold">القطاع:</span>
-                  {{ d.sectorName || "-" }}
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

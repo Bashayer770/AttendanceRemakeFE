@@ -1,0 +1,99 @@
+<div class="flex flex-col items-center justify-start bg-gray-50 arabic-text">
+  <div class="w-full max-w-6xl bg-white shadow-lg px-6 py-6 rounded-lg">
+    <h2 class="text-2xl font-semibold mb-4 text-center">بحث الموظف</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSearch()" class="flex gap-2 mb-6">
+      <input
+        type="text"
+        formControlName="query"
+        placeholder="أدخل رقم الموظف أو اسم الدخول"
+        class="w-full px-4 py-3 border-b-2 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:bg-white hover:bg-slate-100 arabic-text"
+      />
+      <button
+        type="submit"
+        class="bg-primary text-white px-6 rounded-lg hover:bg-primary/80"
+      >
+        بحث
+      </button>
+    </form>
+
+    <div *ngIf="loading" class="text-center text-gray-500">...جاري البحث</div>
+    <div *ngIf="error" class="text-center text-red-600">{{ error }}</div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+      <!-- Results list / card -->
+      <div class="lg:col-span-2">
+        <div
+          *ngIf="vm as r"
+          class="border rounded-lg shadow-sm p-4 hover:bg-gray-50 cursor-pointer"
+          (click)="openDetails()"
+        >
+          <div class="flex items-center justify-between">
+            <div class="text-lg font-semibold">{{ r.name || "-" }}</div>
+            <div class="text-sm text-gray-500">
+              رقم وظيفي: {{ r.empNo || "-" }}
+            </div>
+          </div>
+          <div class="mt-2 text-gray-700">الوظيفة: {{ r.role || "-" }}</div>
+          <div class="mt-1 text-gray-700">القسم: {{ r.deptName || "-" }}</div>
+          <div class="mt-1 text-gray-700">
+            القطاع: {{ r.sectorName || "-" }}
+          </div>
+        </div>
+        <div
+          *ngIf="!vm && !loading && !error"
+          class="text-center text-gray-400 py-8"
+        >
+          لا توجد بيانات
+        </div>
+      </div>
+
+      <!-- Slide-in details panel -->
+      <div class="lg:col-span-1">
+        <div class="relative">
+          <div
+            class="transition-all duration-300"
+            [class.translate-x-0]="showDetails"
+            [class.translate-x-full]="!showDetails"
+          >
+            <div
+              class="fixed right-4 top-28 w-full max-w-sm bg-white border rounded-xl shadow-2xl p-5"
+              *ngIf="showDetails && vm as d"
+            >
+              <div class="flex justify-between items-center mb-3">
+                <h3 class="text-xl font-semibold">تفاصيل الموظف</h3>
+                <button
+                  class="text-gray-500 hover:text-red-600 text-2xl"
+                  (click)="closeDetails()"
+                >
+                  &times;
+                </button>
+              </div>
+              <div class="space-y-2 text-gray-800">
+                <div>
+                  <span class="font-semibold">الاسم:</span> {{ d.name || "-" }}
+                </div>
+                <div>
+                  <span class="font-semibold">الرقم الوظيفي:</span>
+                  {{ d.empNo || "-" }}
+                </div>
+                <div>
+                  <span class="font-semibold">الوظيفة:</span>
+                  {{ d.role || "-" }}
+                </div>
+                <div>
+                  <span class="font-semibold">القسم:</span>
+                  {{ d.deptName || "-" }}
+                </div>
+                <div>
+                  <span class="font-semibold">القطاع:</span>
+                  {{ d.sectorName || "-" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

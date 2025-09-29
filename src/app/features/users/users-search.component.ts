@@ -1,0 +1,132 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  FormGroup,
+} from '@angular/forms';
+import {
+  EmployeeSearchService,
+  Db2Employee,
+  Db2EmployeeInfo,
+} from '../../services/employee-search.service';
+import { Observable, forkJoin } from 'rxjs';
+
+interface SearchForm {
+  query: string;
+}
+
+interface EmployeeVM {
+  empNo: number | null;
+  name: string | null;
+  role?: string | null;
+  deptName?: string | null;
+  sectorName?: string | null;
+}
+
+@Component({
+  selector: 'app-users-search',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './users-search.component.html',
+})
+export class UsersSearchComponent {
+  loading = false;
+  error: string | null = null;
+  vm: EmployeeVM | null = null;
+  form!: FormGroup;
+  showDetails = false;
+
+  constructor(private fb: FormBuilder, private svc: EmployeeSearchService) {
+    this.form = this.fb.group({
+      query: ['', [Validators.required]],
+    });
+  }
+
+  onSearch() {
+    this.error = null;
+    this.vm = null;
+    this.showDetails = false;
+
+    const q = (this.form.value as SearchForm).query?.trim();
+    if (!q) return;
+
+    this.loading = true;
+    const asNum = Number(q);
+    const isNumber = !Number.isNaN(asNum);
+
+    const obs: Observable<Db2EmployeeInfo | Db2Employee | undefined> = isNumber
+      ? this.svc.getCompleteEmployee(asNum)
+      : (this.svc.GetEmployeeDataStr(q) as unknown as Observable<
+          Db2Employee | undefined
+        >);
+
+    obs.subscribe({
+      next: (res) => {
+        if (!res) {
+          this.vm = null;
+          this.loading = false;
+          this.error = 'لم يتم العثور على نتائج';
+          return;
+        }
+
+        if ((res as Db2EmployeeInfo).empNo !== undefined) {
+          const info = res as Db2EmployeeInfo;
+          this.vm = {
+            empNo: info.empNo,
+            name: info.empName ?? null,
+            role: info.empRole ?? null,
+            deptName: info.deptName ?? null,
+            sectorName: info.sectorName ?? null,
+          };
+          this.loading = false;
+          return;
+        }
+
+        const raw = res as Db2Employee;
+        forkJoin({
+          jobs: this.svc.GetJobData(),
+          departments: this.svc.GetDepartment(),
+          sectors: this.svc.GetSectors(),
+        }).subscribe({
+          next: ({ jobs, departments, sectors }) => {
+            this.vm = {
+              empNo: raw.EmpNo,
+              name: raw.FullName,
+              role: jobs.find((j) => j.Value === raw.JobCode)?.Text ?? null,
+              deptName:
+                departments.find((d) => d.Code === raw.DeptCode)?.Name ?? null,
+              sectorName:
+                sectors.find((s) => Number.parseInt(s.Value) === raw.SectorCode)
+                  ?.Text ?? null,
+            };
+            this.loading = false;
+          },
+          error: () => {
+            this.vm = {
+              empNo: raw.EmpNo,
+              name: raw.FullName,
+              role: null,
+              deptName: null,
+              sectorName: null,
+            };
+            this.loading = false;
+          },
+        });
+      },
+      error: () => {
+        this.error = 'فشل البحث';
+        this.loading = false;
+      },
+    });
+  }
+
+  openDetails() {
+    if (this.vm) this.showDetails = true;
+  }
+
+  closeDetails() {
+    this.showDetails = false;
+  }
+}

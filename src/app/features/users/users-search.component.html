@@ -54,6 +54,41 @@
                 <span class="font-semibold">القطاع:</span>
                 {{ d.sectorName || "-" }}
               </div>
+              <hr class="my-2" />
+              <div class="text-sm text-gray-600">
+                الكود الحيوي: {{ d.fingerCode ?? "-" }}
+              </div>
+              <div class="text-sm text-gray-600">
+                كود الدوام: {{ d.timingCode ?? "-" }}
+              </div>
+              <div class="text-sm text-gray-600">
+                إذن:
+                {{
+                  d.hasAllow === true
+                    ? "نعم"
+                    : d.hasAllow === false
+                    ? "لا"
+                    : "-"
+                }}
+              </div>
+              <div class="text-sm text-gray-600">
+                الحالة: {{ d.status ?? "-" }}
+              </div>
+              <div class="text-sm text-gray-600">
+                في إجازة:
+                {{
+                  d.inLeave === true ? "نعم" : d.inLeave === false ? "لا" : "-"
+                }}
+              </div>
+              <div class="text-sm text-gray-600">
+                يمتلك تصريح:
+                {{
+                  d.hasPass === true ? "نعم" : d.hasPass === false ? "لا" : "-"
+                }}
+              </div>
+              <div class="text-sm text-gray-600">
+                الموقع: {{ d.locCode ?? "-" }}
+              </div>
             </div>
           </ng-container>
           <ng-template #noDetails>

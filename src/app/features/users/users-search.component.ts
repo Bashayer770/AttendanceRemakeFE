@@ -10,6 +10,7 @@ import {
   EmployeeSearchService,
   Db2Employee,
   Db2EmployeeInfo,
+  EmployeeDetailsDto,
 } from '../../services/employee-search.service';
 import { Observable, forkJoin } from 'rxjs';
 
@@ -23,6 +24,14 @@ interface EmployeeVM {
   role?: string | null;
   deptName?: string | null;
   sectorName?: string | null;
+  // Backend fields
+  fingerCode?: number | null;
+  timingCode?: number | null;
+  hasAllow?: boolean | null;
+  status?: number | null;
+  inLeave?: boolean | null;
+  hasPass?: boolean | null;
+  locCode?: number | null;
 }
 
 @Component({
@@ -80,7 +89,8 @@ export class UsersSearchComponent {
             deptName: info.deptName ?? null,
             sectorName: info.sectorName ?? null,
           };
-          this.loading = false;
+          // enrich backend fields
+          this.fetchBackendDetails(info.empNo);
           return;
         }
 
@@ -101,7 +111,8 @@ export class UsersSearchComponent {
                 sectors.find((s) => Number.parseInt(s.Value) === raw.SectorCode)
                   ?.Text ?? null,
             };
-            this.loading = false;
+            // enrich backend fields
+            this.fetchBackendDetails(raw.EmpNo);
           },
           error: () => {
             this.vm = {
@@ -111,12 +122,33 @@ export class UsersSearchComponent {
               deptName: null,
               sectorName: null,
             };
-            this.loading = false;
+            this.fetchBackendDetails(raw.EmpNo);
           },
         });
       },
       error: () => {
         this.error = 'فشل البحث';
+        this.loading = false;
+      },
+    });
+  }
+
+  private fetchBackendDetails(empNo: number) {
+    this.svc.getEmployeeByEmpNo(empNo).subscribe({
+      next: (d: EmployeeDetailsDto) => {
+        this.vm = {
+          ...(this.vm ?? { empNo: d.empNo, name: null }),
+          fingerCode: d.fingerCode ?? null,
+          timingCode: d.timingCode ?? null,
+          hasAllow: d.hasAllow ?? null,
+          status: d.status ?? null,
+          inLeave: d.inLeave ?? null,
+          hasPass: d.hasPass ?? null,
+          locCode: d.locCode ?? null,
+        };
+        this.loading = false;
+      },
+      error: () => {
         this.loading = false;
       },
     });

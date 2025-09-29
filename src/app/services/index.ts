@@ -43,4 +43,9 @@ export const API = {
         startDate
       )}&EndDate=${encodeURIComponent(endDate)}`,
   },
+
+  EMPLOYEES: {
+    SEARCH: `${BASE_URL}/Employees/search`,
+    GET_BY_EMPNO: (empNo: number) => `${BASE_URL}/Employees/${empNo}`,
+  },
 };

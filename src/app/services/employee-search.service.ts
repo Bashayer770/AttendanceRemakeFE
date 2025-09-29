@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { API } from './index';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,7 @@ export class EmployeeSearchService {
 
   constructor(private http: HttpClient) {}
 
+  // External DB2 endpoints
   GetEmployeeData(param: number): Observable<Db2Employee> {
     return this.http.get<Db2Employee>(`${this.empUrl}/${param}`);
   }
@@ -58,6 +60,33 @@ export class EmployeeSearchService {
       })
     );
   }
+
+  // Backend Employees endpoints
+  searchEmployees(params: {
+    empNo?: number;
+    fingerCode?: number;
+    civilId?: string;
+    deptCode?: number;
+    name?: string;
+  }): Observable<EmployeeDetailsDto[]> {
+    let httpParams = new HttpParams();
+    if (params.empNo != null)
+      httpParams = httpParams.set('empNo', params.empNo);
+    if (params.fingerCode != null)
+      httpParams = httpParams.set('fingerCode', params.fingerCode);
+    if (params.civilId) httpParams = httpParams.set('civilId', params.civilId);
+    if (params.deptCode != null)
+      httpParams = httpParams.set('deptCode', params.deptCode);
+    if (params.name) httpParams = httpParams.set('name', params.name);
+
+    return this.http.get<EmployeeDetailsDto[]>(API.EMPLOYEES.SEARCH, {
+      params: httpParams,
+    });
+  }
+
+  getEmployeeByEmpNo(empNo: number): Observable<EmployeeDetailsDto> {
+    return this.http.get<EmployeeDetailsDto>(API.EMPLOYEES.GET_BY_EMPNO(empNo));
+  }
 }
 
 interface Department {
@@ -93,4 +122,27 @@ export interface Db2EmployeeInfo {
   empRole: string | undefined;
   deptName: string | undefined;
   sectorName: string | undefined;
+}
+
+export interface EmployeeDetailsDto {
+  empNo: number;
+  fingerCode: number;
+  deptCode: number;
+  nameA: string;
+  nameE: string;
+  timingCode: number;
+  jobType: number;
+  sex: number;
+  checkLate: number;
+  hasAllow: boolean;
+  status: number;
+  inLeave: boolean;
+  hasPass?: boolean;
+  locCode?: number | null;
+  regNo?: number | null;
+  civilID?: string | null;
+  db2DeptCode?: number | null;
+  fullName?: string | null;
+  shortName?: string | null;
+  mobileNo?: number | null;
 }

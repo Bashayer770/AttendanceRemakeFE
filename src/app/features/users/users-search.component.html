@@ -1,6 +1,10 @@
 <div class="flex flex-col items-center justify-start bg-gray-50 arabic-text">
-  <div class="w-full max-w-6xl bg-white shadow-lg px-6 py-6 rounded-lg">
-    <h2 class="text-2xl font-semibold mb-4 text-center">بحث الموظف</h2>
+  <div class="w-full max-w-7xl bg-white shadow-lg px-8 pb-4 rounded-lg">
+    <div
+      class="bg-primary text-white text-center py-4 rounded-t-lg -mx-8 -mt-2 mb-8"
+    >
+      <h2 class="text-3xl font-sans arabic-text">بحث الموظف</h2>
+    </div>
 
     <form [formGroup]="form" (ngSubmit)="onSearch()" class="flex gap-2 mb-6">
       <input

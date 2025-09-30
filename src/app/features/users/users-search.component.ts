@@ -106,34 +106,8 @@ export class UsersSearchComponent {
       next: (raw) => {
         if (raw && raw.EmpNo) {
           // Build basic VM and enrich
-          forkJoin({
-            jobs: this.svc.GetJobData(),
-            departments: this.svc.GetDepartment(),
-            sectors: this.svc.GetSectors(),
-          }).subscribe({
-            next: ({ jobs, departments, sectors }) => {
-              this.vm = {
-                empNo: raw.EmpNo,
-                name: raw.FullName,
-                role: jobs.find((j) => j.Value === raw.JobCode)?.Text ?? null,
-                deptName:
-                  departments.find((d) => d.Code === raw.DeptCode)?.Name ??
-                  null,
-                sectorName:
-                  sectors.find(
-                    (s) => Number.parseInt(s.Value) === raw.SectorCode
-                  )?.Text ?? null,
-              };
-              this.fetchBackendDetails(raw.EmpNo);
-            },
-            error: () => {
-              this.vm = {
-                empNo: raw.EmpNo,
-                name: raw.FullName,
-              } as EmployeeVM;
-              this.fetchBackendDetails(raw.EmpNo);
-            },
-          });
+          this.resolveNamesFromLookups(raw);
+          this.fetchBackendDetails(raw.EmpNo);
         } else {
           // fallback to backend name search (DescA/DescE)
           this.searchByName(q);
@@ -170,33 +144,52 @@ export class UsersSearchComponent {
           this.error = 'لم يتم العثور على نتائج';
           return;
         }
-        forkJoin({
-          jobs: this.svc.GetJobData(),
-          departments: this.svc.GetDepartment(),
-          sectors: this.svc.GetSectors(),
-        }).subscribe({
-          next: ({ jobs, departments, sectors }) => {
-            this.vm = {
-              empNo: raw.EmpNo,
-              name: raw.FullName,
-              role: jobs.find((j) => j.Value === raw.JobCode)?.Text ?? null,
-              deptName:
-                departments.find((d) => d.Code === raw.DeptCode)?.Name ?? null,
-              sectorName:
-                sectors.find((s) => Number.parseInt(s.Value) === raw.SectorCode)
-                  ?.Text ?? null,
-            };
-            this.fetchBackendDetails(raw.EmpNo);
-          },
-          error: () => {
-            this.vm = { empNo: raw.EmpNo, name: raw.FullName } as EmployeeVM;
-            this.fetchBackendDetails(raw.EmpNo);
-          },
-        });
+        this.resolveNamesFromLookups(raw);
+        this.fetchBackendDetails(raw.EmpNo);
       },
       error: () => {
         this.loading = false;
         this.error = 'فشل البحث';
+      },
+    });
+  }
+
+  private resolveNamesFromLookups(raw: Db2Employee) {
+    const deptCodeNum = Number(raw.DeptCode);
+    const sectorCodeNum = Number(raw.SectorCode);
+
+    forkJoin({
+      jobs: this.svc.GetJobData(),
+      departments: this.svc.GetDepartment(),
+      sectors: this.svc.GetSectors(),
+    }).subscribe({
+      next: ({ jobs, departments, sectors }) => {
+        const role =
+          jobs.find((j) => Number(j.Value) === Number(raw.JobCode))?.Text ??
+          null;
+        const deptName =
+          departments.find((d) => Number(d.Code) === deptCodeNum)?.Name ||
+          departments.find((d) => Number(d.Code) === deptCodeNum)
+            ?.EnglishName ||
+          null;
+        const sectorName =
+          sectors.find((s) => Number(s.Value) === sectorCodeNum)?.Text ?? null;
+
+        this.vm = {
+          empNo: raw.EmpNo,
+          name: raw.FullName,
+          role,
+          deptName,
+          sectorName,
+          ...(this.vm ?? {}),
+        } as EmployeeVM;
+      },
+      error: () => {
+        this.vm = {
+          empNo: raw.EmpNo,
+          name: raw.FullName,
+          ...(this.vm ?? {}),
+        } as EmployeeVM;
       },
     });
   }
@@ -206,8 +199,7 @@ export class UsersSearchComponent {
     this.vm = {
       empNo: d.empNo,
       name: d.nameA || d.nameE,
-      deptName: undefined,
-      sectorName: undefined,
+      ...(this.vm ?? {}),
     } as EmployeeVM;
     // Enrich backend (fingerCode etc.) and timing plan name
     this.fetchBackendDetails(d.empNo);
@@ -217,30 +209,7 @@ export class UsersSearchComponent {
     this.svc.GetEmployeeData(empNo).subscribe({
       next: (raw) => {
         if (!raw) return;
-        forkJoin({
-          jobs: this.svc.GetJobData(),
-          departments: this.svc.GetDepartment(),
-          sectors: this.svc.GetSectors(),
-        }).subscribe({
-          next: ({ jobs, departments, sectors }) => {
-            this.vm = {
-              ...(this.vm as EmployeeVM),
-              role:
-                jobs.find((j) => j.Value === raw.JobCode)?.Text ??
-                (this.vm as EmployeeVM).role ??
-                null,
-              deptName:
-                departments.find((d) => d.Code === raw.DeptCode)?.Name ??
-                (this.vm as EmployeeVM).deptName ??
-                null,
-              sectorName:
-                sectors.find((s) => Number.parseInt(s.Value) === raw.SectorCode)
-                  ?.Text ??
-                (this.vm as EmployeeVM).sectorName ??
-                null,
-            };
-          },
-        });
+        this.resolveNamesFromLookups(raw);
       },
     });
   }

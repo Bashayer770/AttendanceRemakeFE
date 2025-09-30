@@ -195,10 +195,10 @@ export class UsersSearchComponent {
   }
 
   private populateFromEmployeeDto(d: EmployeeDetailsDto) {
-    // Set basic info from backend DTO (names A/E -> prefer Arabic)
+    // Set basic info from backend DTO (prefer keeping an existing name if already resolved from DB2)
     this.vm = {
       empNo: d.empNo,
-      name: d.nameA || d.nameE,
+      name: this.vm && this.vm.name ? this.vm.name : d.nameA || d.nameE,
       ...(this.vm ?? {}),
     } as EmployeeVM;
     // Enrich backend (fingerCode etc.) and timing plan name

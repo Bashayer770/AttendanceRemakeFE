@@ -12,7 +12,7 @@ import {
   Db2EmployeeInfo,
   EmployeeDetailsDto,
 } from '../../services/employee-search.service';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, of, switchMap } from 'rxjs';
 
 interface SearchForm {
   query: string;
@@ -68,35 +68,106 @@ export class UsersSearchComponent {
     const asNum = Number(q);
     const isNumber = !Number.isNaN(asNum);
 
-    const obs: Observable<Db2EmployeeInfo | Db2Employee | undefined> = isNumber
-      ? this.svc.getCompleteEmployee(asNum)
-      : (this.svc.GetEmployeeDataStr(q) as unknown as Observable<
-          Db2Employee | undefined
-        >);
+    if (isNumber) {
+      // Try EmpNo first; if not found, try fingerCode
+      this.svc
+        .searchEmployees({ empNo: asNum })
+        .pipe(
+          switchMap((list) => {
+            if (list && list.length > 0) return of(list[0]);
+            return this.svc
+              .searchEmployees({ fingerCode: asNum })
+              .pipe(
+                switchMap((list2) =>
+                  of(list2 && list2.length > 0 ? list2[0] : undefined)
+                )
+              );
+          })
+        )
+        .subscribe({
+          next: (dto) => {
+            if (!dto) {
+              // fallback to external by EmpNo
+              this.queryByLoginOrDb2(q);
+              return;
+            }
+            this.populateFromEmployeeDto(dto);
+          },
+          error: () => {
+            this.queryByLoginOrDb2(q);
+          },
+        });
+      return;
+    }
 
-    obs.subscribe({
-      next: (res) => {
-        if (!res) {
-          this.vm = null;
+    // Non-numeric: first try LoginName via DB2, then backend by name
+    this.svc.GetEmployeeDataStr(q).subscribe({
+      next: (raw) => {
+        if (raw && raw.EmpNo) {
+          // Build basic VM and enrich
+          forkJoin({
+            jobs: this.svc.GetJobData(),
+            departments: this.svc.GetDepartment(),
+            sectors: this.svc.GetSectors(),
+          }).subscribe({
+            next: ({ jobs, departments, sectors }) => {
+              this.vm = {
+                empNo: raw.EmpNo,
+                name: raw.FullName,
+                role: jobs.find((j) => j.Value === raw.JobCode)?.Text ?? null,
+                deptName:
+                  departments.find((d) => d.Code === raw.DeptCode)?.Name ??
+                  null,
+                sectorName:
+                  sectors.find(
+                    (s) => Number.parseInt(s.Value) === raw.SectorCode
+                  )?.Text ?? null,
+              };
+              this.fetchBackendDetails(raw.EmpNo);
+            },
+            error: () => {
+              this.vm = {
+                empNo: raw.EmpNo,
+                name: raw.FullName,
+              } as EmployeeVM;
+              this.fetchBackendDetails(raw.EmpNo);
+            },
+          });
+        } else {
+          // fallback to backend name search (DescA/DescE)
+          this.searchByName(q);
+        }
+      },
+      error: () => this.searchByName(q),
+    });
+  }
+
+  private searchByName(name: string) {
+    this.svc.searchEmployees({ name }).subscribe({
+      next: (list) => {
+        if (!list || list.length === 0) {
           this.loading = false;
           this.error = 'لم يتم العثور على نتائج';
           return;
         }
+        const dto = list[0];
+        this.populateFromEmployeeDto(dto);
+      },
+      error: () => {
+        this.loading = false;
+        this.error = 'فشل البحث';
+      },
+    });
+  }
 
-        if ((res as Db2EmployeeInfo).empNo !== undefined) {
-          const info = res as Db2EmployeeInfo;
-          this.vm = {
-            empNo: info.empNo,
-            name: info.empName ?? null,
-            role: info.empRole ?? null,
-            deptName: info.deptName ?? null,
-            sectorName: info.sectorName ?? null,
-          };
-          this.fetchBackendDetails(info.empNo);
+  private queryByLoginOrDb2(q: string) {
+    this.svc.GetEmployeeDataStr(q).subscribe({
+      next: (raw) => {
+        if (!raw) {
+          this.loading = false;
+          this.error = 'لم يتم العثور على نتائج';
           return;
         }
-
-        const raw = res as Db2Employee;
         forkJoin({
           jobs: this.svc.GetJobData(),
           departments: this.svc.GetDepartment(),
@@ -113,26 +184,31 @@ export class UsersSearchComponent {
                 sectors.find((s) => Number.parseInt(s.Value) === raw.SectorCode)
                   ?.Text ?? null,
             };
-            // enrich backend fields
             this.fetchBackendDetails(raw.EmpNo);
           },
           error: () => {
-            this.vm = {
-              empNo: raw.EmpNo,
-              name: raw.FullName,
-              role: null,
-              deptName: null,
-              sectorName: null,
-            };
+            this.vm = { empNo: raw.EmpNo, name: raw.FullName } as EmployeeVM;
             this.fetchBackendDetails(raw.EmpNo);
           },
         });
       },
       error: () => {
-        this.error = 'فشل البحث';
         this.loading = false;
+        this.error = 'فشل البحث';
       },
     });
+  }
+
+  private populateFromEmployeeDto(d: EmployeeDetailsDto) {
+    // Set basic info from backend DTO (names A/E -> prefer Arabic)
+    this.vm = {
+      empNo: d.empNo,
+      name: d.nameA || d.nameE,
+      deptName: undefined,
+      sectorName: undefined,
+    } as EmployeeVM;
+    // Enrich department/sector names via lookups if you want codes -> names later (optional)
+    this.fetchBackendDetails(d.empNo);
   }
 
   private fetchBackendDetails(empNo: number) {

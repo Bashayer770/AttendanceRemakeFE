@@ -87,6 +87,15 @@ export class EmployeeSearchService {
   getEmployeeByEmpNo(empNo: number): Observable<EmployeeDetailsDto> {
     return this.http.get<EmployeeDetailsDto>(API.EMPLOYEES.GET_BY_EMPNO(empNo));
   }
+
+  // Backend TimingPlans endpoints
+  getTimingPlanByCode(code: number): Observable<TimingPlanDto> {
+    return this.http.get<TimingPlanDto>(API.TIMING_PLANS.GET_BY_CODE(code));
+  }
+
+  getTimingPlans(): Observable<TimingPlanDto[]> {
+    return this.http.get<TimingPlanDto[]>(API.TIMING_PLANS.GET_ALL);
+  }
 }
 
 interface Department {
@@ -145,4 +154,10 @@ export interface EmployeeDetailsDto {
   fullName?: string | null;
   shortName?: string | null;
   mobileNo?: number | null;
+}
+
+export interface TimingPlanDto {
+  code: number;
+  descA: string;
+  descE: string;
 }

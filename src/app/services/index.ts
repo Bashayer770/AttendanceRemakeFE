@@ -48,4 +48,8 @@ export const API = {
     SEARCH: `${BASE_URL}/Employees/search`,
     GET_BY_EMPNO: (empNo: number) => `${BASE_URL}/Employees/${empNo}`,
   },
+  TIMING_PLANS: {
+    GET_ALL: `${BASE_URL}/TimingPlans`,
+    GET_BY_CODE: (code: number) => `${BASE_URL}/TimingPlans/${code}`,
+  },
 };

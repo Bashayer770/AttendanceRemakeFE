@@ -76,22 +76,6 @@
               <div class="text-sm text-gray-600">
                 <span class="font-semibold">الحاله:</span> {{ d.status ?? "-" }}
               </div>
-              <div class="text-sm text-gray-600">
-                <span class="font-semibold">لديه اذن:</span>
-                {{
-                  d.inLeave === true ? "نعم" : d.inLeave === false ? "لا" : "-"
-                }}
-              </div>
-              <div class="text-sm text-gray-600">
-                <span class="font-semibold">تصريح:</span>
-                {{
-                  d.hasPass === true ? "نعم" : d.hasPass === false ? "لا" : "-"
-                }}
-              </div>
-              <div class="text-sm text-gray-600">
-                <span class="font-semibold">الموقع:</span>
-                {{ d.locCode ?? "-" }}
-              </div>
             </div>
           </ng-container>
           <ng-template #noDetails>

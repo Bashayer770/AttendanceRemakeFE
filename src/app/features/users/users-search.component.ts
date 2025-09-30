@@ -92,6 +92,7 @@ export class UsersSearchComponent {
               return;
             }
             this.populateFromEmployeeDto(dto);
+            this.enrichNamesFromDb2(dto.empNo);
           },
           error: () => {
             this.queryByLoginOrDb2(q);
@@ -152,6 +153,7 @@ export class UsersSearchComponent {
         }
         const dto = list[0];
         this.populateFromEmployeeDto(dto);
+        this.enrichNamesFromDb2(dto.empNo);
       },
       error: () => {
         this.loading = false;
@@ -207,8 +209,40 @@ export class UsersSearchComponent {
       deptName: undefined,
       sectorName: undefined,
     } as EmployeeVM;
-    // Enrich department/sector names via lookups if you want codes -> names later (optional)
+    // Enrich backend (fingerCode etc.) and timing plan name
     this.fetchBackendDetails(d.empNo);
+  }
+
+  private enrichNamesFromDb2(empNo: number) {
+    this.svc.GetEmployeeData(empNo).subscribe({
+      next: (raw) => {
+        if (!raw) return;
+        forkJoin({
+          jobs: this.svc.GetJobData(),
+          departments: this.svc.GetDepartment(),
+          sectors: this.svc.GetSectors(),
+        }).subscribe({
+          next: ({ jobs, departments, sectors }) => {
+            this.vm = {
+              ...(this.vm as EmployeeVM),
+              role:
+                jobs.find((j) => j.Value === raw.JobCode)?.Text ??
+                (this.vm as EmployeeVM).role ??
+                null,
+              deptName:
+                departments.find((d) => d.Code === raw.DeptCode)?.Name ??
+                (this.vm as EmployeeVM).deptName ??
+                null,
+              sectorName:
+                sectors.find((s) => Number.parseInt(s.Value) === raw.SectorCode)
+                  ?.Text ??
+                (this.vm as EmployeeVM).sectorName ??
+                null,
+            };
+          },
+        });
+      },
+    });
   }
 
   private fetchBackendDetails(empNo: number) {

@@ -33,6 +33,8 @@ interface EmployeeVM {
   inLeave?: boolean | null;
   hasPass?: boolean | null;
   locCode?: number | null;
+  // Derived labels
+  timingPlanName?: string | null;
 }
 
 @Component({
@@ -146,7 +148,23 @@ export class UsersSearchComponent {
           hasPass: d.hasPass ?? null,
           locCode: d.locCode ?? null,
         };
-        this.loading = false;
+        // fetch timing plan name
+        if (d.timingCode != null) {
+          this.svc.getTimingPlanByCode(d.timingCode).subscribe({
+            next: (tp) => {
+              this.vm = {
+                ...(this.vm as EmployeeVM),
+                timingPlanName: tp?.descA ?? null,
+              };
+              this.loading = false;
+            },
+            error: () => {
+              this.loading = false;
+            },
+          });
+        } else {
+          this.loading = false;
+        }
       },
       error: () => {
         this.loading = false;

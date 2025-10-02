@@ -88,11 +88,18 @@ export class EmployeeSearchService {
     return this.http.get<EmployeeDetailsDto>(API.EMPLOYEES.GET_BY_EMPNO(empNo));
   }
 
-  // Fetch a single employee by fingerCode using the search endpoint
+  // Fetch list by fingerCode using explicit endpoint
+  searchByFinger(fingerCode: number): Observable<EmployeeDetailsDto[]> {
+    return this.http.get<EmployeeDetailsDto[]>(
+      API.EMPLOYEES.SEARCH_BY_FINGER(fingerCode)
+    );
+  }
+
+  // Fetch a single employee by fingerCode using the explicit endpoint
   getEmployeeByFingerCode(
     fingerCode: number
   ): Observable<EmployeeDetailsDto | undefined> {
-    return this.searchEmployees({ fingerCode }).pipe(
+    return this.searchByFinger(fingerCode).pipe(
       map((list) => (list && list.length > 0 ? list[0] : undefined))
     );
   }

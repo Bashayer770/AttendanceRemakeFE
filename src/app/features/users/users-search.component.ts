@@ -72,7 +72,7 @@ export class UsersSearchComponent {
       // Query by EmpNo and FingerCode in parallel; prefer EmpNo if both return results
       forkJoin({
         byEmpNo: this.svc.searchEmployees({ empNo: asNum }),
-        byFinger: this.svc.searchEmployees({ fingerCode: asNum }),
+        byFinger: this.svc.searchByFinger(asNum),
       }).subscribe({
         next: ({ byEmpNo, byFinger }) => {
           const pickedFromEmpNo = byEmpNo && byEmpNo.length > 0;

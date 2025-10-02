@@ -16,6 +16,7 @@ import { Observable, forkJoin, of, switchMap } from 'rxjs';
 
 interface SearchForm {
   query: string;
+  type: 'auto' | 'empNo' | 'fingerCode' | 'loginName' | 'name';
 }
 
 interface EmployeeVM {
@@ -53,6 +54,7 @@ export class UsersSearchComponent {
   constructor(private fb: FormBuilder, private svc: EmployeeSearchService) {
     this.form = this.fb.group({
       query: ['', [Validators.required]],
+      type: ['auto', [Validators.required]],
     });
   }
 
@@ -61,33 +63,57 @@ export class UsersSearchComponent {
     this.vm = null;
     this.showDetails = false;
 
-    const q = (this.form.value as SearchForm).query?.trim();
+    const { query, type } = this.form.value as SearchForm;
+    const q = query?.trim();
     if (!q) return;
 
     this.loading = true;
-    const asNum = Number(q);
-    const isNumber = !Number.isNaN(asNum);
 
-    if (isNumber) {
-      // Run fingerCode and EmpNo in parallel; prefer fingerCode if both return
-      forkJoin({
-        byFinger: this.svc.searchByFinger(asNum),
-        byEmpNo: this.svc.searchEmployees({ empNo: asNum }),
-      }).subscribe({
-        next: ({ byFinger, byEmpNo }) => {
-          const dto = (byFinger && byFinger[0]) || (byEmpNo && byEmpNo[0]);
+    // Branch on selected type
+    if (type === 'empNo') {
+      const asNum = Number(q);
+      if (Number.isNaN(asNum)) {
+        this.loading = false;
+        this.error = 'أدخل رقماً صحيحاً';
+        return;
+      }
+      this.svc.searchEmployees({ empNo: asNum }).subscribe({
+        next: (list) => {
+          const dto = list && list.length > 0 ? list[0] : undefined;
           if (!dto) {
-            this.queryByLoginOrDb2(q);
+            this.loading = false;
+            this.error = 'لم يتم العثور على نتائج';
             return;
           }
           this.populateFromEmployeeDto(dto);
-          if (!dto.fullName) {
-            this.enrichNamesFromDb2(dto.empNo);
+          if (!dto.fullName) this.enrichNamesFromDb2(dto.empNo);
+        },
+        error: () => {
+          this.loading = false;
+          this.error = 'فشل البحث';
+        },
+      });
+      return;
+    }
+
+    if (type === 'fingerCode') {
+      const asNum = Number(q);
+      if (Number.isNaN(asNum)) {
+        this.loading = false;
+        this.error = 'أدخل رقماً صحيحاً';
+        return;
+      }
+      this.svc.searchByFinger(asNum).subscribe({
+        next: (list) => {
+          const dto = list && list.length > 0 ? list[0] : undefined;
+          if (!dto) {
+            this.loading = false;
+            this.error = 'لم يتم العثور على نتائج';
+            return;
           }
-          // If chosen dto came from fingerCode, ensure details load by fingerCode path
-          const cameFromFinger =
-            byFinger && byFinger.length > 0 && dto === byFinger[0];
-          if (cameFromFinger && dto.fingerCode) {
+          this.populateFromEmployeeDto(dto);
+          if (!dto.fullName) this.enrichNamesFromDb2(dto.empNo);
+          if (dto.fingerCode) {
             this.svc.getEmployeeByFingerCode(dto.fingerCode).subscribe({
               next: (fdto) => {
                 if (!fdto) return;
@@ -97,21 +123,92 @@ export class UsersSearchComponent {
           }
         },
         error: () => {
-          this.queryByLoginOrDb2(q);
+          this.loading = false;
+          this.error = 'فشل البحث';
         },
       });
       return;
     }
 
-    // Non-numeric: first try LoginName via DB2, then backend by name
+    if (type === 'loginName') {
+      this.svc.GetEmployeeDataStr(q).subscribe({
+        next: (raw) => {
+          if (raw && raw.EmpNo) {
+            this.resolveNamesFromLookups(raw);
+            this.fetchBackendDetails(raw.EmpNo);
+          } else {
+            this.loading = false;
+            this.error = 'لم يتم العثور على نتائج';
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.error = 'فشل البحث';
+        },
+      });
+      return;
+    }
+
+    if (type === 'name') {
+      this.searchByName(q);
+      return;
+    }
+
+    // Default auto behavior
+    const asNum = Number(q);
+    const isNumber = !Number.isNaN(asNum);
+
+    if (isNumber) {
+      // Sequential: try fingerCode first; only if empty, try EmpNo. Suppress 404s as empty results.
+      this.svc
+        .searchByFinger(asNum)
+        .pipe(
+          (src) => src.pipe((obs) => obs),
+          switchMap((byFinger: any) => {
+            if (byFinger && byFinger.length > 0) {
+              return of({ byFinger, byEmpNo: [] });
+            }
+            return this.svc
+              .searchEmployees({ empNo: asNum })
+              .pipe(switchMap((byEmpNo) => of({ byFinger: [], byEmpNo })));
+          })
+        )
+        .subscribe({
+          next: ({ byFinger, byEmpNo }) => {
+            const dto = (byFinger && byFinger[0]) || (byEmpNo && byEmpNo[0]);
+            if (!dto) {
+              this.queryByLoginOrDb2(q);
+              return;
+            }
+            this.populateFromEmployeeDto(dto);
+            if (!dto.fullName) {
+              this.enrichNamesFromDb2(dto.empNo);
+            }
+            const cameFromFinger =
+              byFinger && byFinger.length > 0 && dto === byFinger[0];
+            if (cameFromFinger && dto.fingerCode) {
+              this.svc.getEmployeeByFingerCode(dto.fingerCode).subscribe({
+                next: (fdto) => {
+                  if (!fdto) return;
+                  this.populateFromEmployeeDto(fdto);
+                },
+              });
+            }
+          },
+          error: () => {
+            this.queryByLoginOrDb2(q);
+          },
+        });
+      return;
+    }
+
+    // Non-numeric auto path: LoginName first, fallback to name
     this.svc.GetEmployeeDataStr(q).subscribe({
       next: (raw) => {
         if (raw && raw.EmpNo) {
-          // Build basic VM and enrich
           this.resolveNamesFromLookups(raw);
           this.fetchBackendDetails(raw.EmpNo);
         } else {
-          // fallback to backend name search (DescA/DescE)
           this.searchByName(q);
         }
       },

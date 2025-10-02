@@ -47,6 +47,10 @@ export const API = {
   EMPLOYEES: {
     SEARCH: `${BASE_URL}/Employees/search`,
     GET_BY_EMPNO: (empNo: number) => `${BASE_URL}/Employees/${empNo}`,
+    SEARCH_BY_FINGER: (fingerCode: number) =>
+      `${BASE_URL}/Employees/search?fingerCode=${encodeURIComponent(
+        fingerCode
+      )}`,
   },
   TIMING_PLANS: {
     GET_ALL: `${BASE_URL}/TimingPlans`,

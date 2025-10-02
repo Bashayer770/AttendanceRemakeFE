@@ -379,5 +379,6 @@ export class UsersSearchComponent {
     this.showDetails = false;
     this.populateFromEmployeeDto(dto);
     if (!dto.fullName) this.enrichNamesFromDb2(dto.empNo);
+    this.showDetails = true;
   }
 }

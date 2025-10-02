@@ -110,7 +110,11 @@
           class="bg-white rounded-lg shadow divide-y"
         >
           <div
-            class="p-3 hover:bg-slate-50 cursor-pointer flex items-center justify-between"
+            class="p-3 cursor-pointer flex items-center justify-between"
+            [ngClass]="{
+              'bg-primary/10 hover:bg-primary/20': selectedEmpNo === r.empNo,
+              'hover:bg-slate-50': selectedEmpNo !== r.empNo
+            }"
             *ngFor="let r of results"
             (click)="selectResult(r)"
           >
@@ -145,7 +149,7 @@
           class="text-center text-gray-400 py-8"
           dir="rtl"
         >
-          لا توجد بيانات
+          {{ hasSearched ? "لا توجد بيانات" : "ادخل بيانات الموظف" }}
         </div>
       </div>
     </div>

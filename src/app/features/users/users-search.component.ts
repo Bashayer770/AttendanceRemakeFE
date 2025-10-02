@@ -51,6 +51,8 @@ export class UsersSearchComponent {
   form!: FormGroup;
   showDetails = false;
   results: EmployeeDetailsDto[] = [];
+  hasSearched = false;
+  selectedEmpNo: number | null = null;
 
   constructor(private fb: FormBuilder, private svc: EmployeeSearchService) {
     this.form = this.fb.group({
@@ -64,6 +66,8 @@ export class UsersSearchComponent {
     this.vm = null;
     this.showDetails = false;
     this.results = [];
+    this.selectedEmpNo = null;
+    this.hasSearched = true;
 
     const { query, type } = this.form.value as SearchForm;
     const q = query?.trim();
@@ -380,5 +384,6 @@ export class UsersSearchComponent {
     this.populateFromEmployeeDto(dto);
     if (!dto.fullName) this.enrichNamesFromDb2(dto.empNo);
     this.showDetails = true;
+    this.selectedEmpNo = dto.empNo;
   }
 }

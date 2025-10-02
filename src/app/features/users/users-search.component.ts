@@ -75,16 +75,27 @@ export class UsersSearchComponent {
         byFinger: this.svc.searchEmployees({ fingerCode: asNum }),
       }).subscribe({
         next: ({ byEmpNo, byFinger }) => {
-          const dto = (byEmpNo && byEmpNo[0]) || (byFinger && byFinger[0]);
+          const pickedFromEmpNo = byEmpNo && byEmpNo.length > 0;
+          const dto = pickedFromEmpNo ? byEmpNo[0] : byFinger && byFinger[0];
           if (!dto) {
             // fallback to external by EmpNo/LoginName
             this.queryByLoginOrDb2(q);
             return;
           }
+          // Populate and enrich
           this.populateFromEmployeeDto(dto);
-          // Only enrich names from DB2 if backend did not include fullName
           if (!dto.fullName) {
             this.enrichNamesFromDb2(dto.empNo);
+          }
+
+          // If the result is from fingerCode, ensure details load by fingerCode path
+          if (!pickedFromEmpNo && dto.fingerCode) {
+            this.svc.getEmployeeByFingerCode(dto.fingerCode).subscribe({
+              next: (fdto) => {
+                if (!fdto) return;
+                this.populateFromEmployeeDto(fdto);
+              },
+            });
           }
         },
         error: () => {

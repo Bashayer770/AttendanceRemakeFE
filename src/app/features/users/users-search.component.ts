@@ -69,35 +69,28 @@ export class UsersSearchComponent {
     const isNumber = !Number.isNaN(asNum);
 
     if (isNumber) {
-      // Try EmpNo first; if not found, try fingerCode
-      this.svc
-        .searchEmployees({ empNo: asNum })
-        .pipe(
-          switchMap((list) => {
-            if (list && list.length > 0) return of(list[0]);
-            return this.svc
-              .searchEmployees({ fingerCode: asNum })
-              .pipe(
-                switchMap((list2) =>
-                  of(list2 && list2.length > 0 ? list2[0] : undefined)
-                )
-              );
-          })
-        )
-        .subscribe({
-          next: (dto) => {
-            if (!dto) {
-              // fallback to external by EmpNo
-              this.queryByLoginOrDb2(q);
-              return;
-            }
-            this.populateFromEmployeeDto(dto);
-            this.enrichNamesFromDb2(dto.empNo);
-          },
-          error: () => {
+      // Query by EmpNo and FingerCode in parallel; prefer EmpNo if both return results
+      forkJoin({
+        byEmpNo: this.svc.searchEmployees({ empNo: asNum }),
+        byFinger: this.svc.searchEmployees({ fingerCode: asNum }),
+      }).subscribe({
+        next: ({ byEmpNo, byFinger }) => {
+          const dto = (byEmpNo && byEmpNo[0]) || (byFinger && byFinger[0]);
+          if (!dto) {
+            // fallback to external by EmpNo/LoginName
             this.queryByLoginOrDb2(q);
-          },
-        });
+            return;
+          }
+          this.populateFromEmployeeDto(dto);
+          // Only enrich names from DB2 if backend did not include fullName
+          if (!dto.fullName) {
+            this.enrichNamesFromDb2(dto.empNo);
+          }
+        },
+        error: () => {
+          this.queryByLoginOrDb2(q);
+        },
+      });
       return;
     }
 
@@ -127,7 +120,10 @@ export class UsersSearchComponent {
         }
         const dto = list[0];
         this.populateFromEmployeeDto(dto);
-        this.enrichNamesFromDb2(dto.empNo);
+        // Only enrich names from DB2 if backend did not include fullName
+        if (!dto.fullName) {
+          this.enrichNamesFromDb2(dto.empNo);
+        }
       },
       error: () => {
         this.loading = false;
@@ -195,10 +191,16 @@ export class UsersSearchComponent {
   }
 
   private populateFromEmployeeDto(d: EmployeeDetailsDto) {
-    // Set basic info from backend DTO (prefer keeping an existing name if already resolved from DB2)
+    // Prefer an existing name (e.g., from DB2/LoginName), else use fullName, then NameA/NameE
+    const displayName =
+      (this.vm && this.vm.name ? this.vm.name : undefined) ??
+      d.fullName ??
+      d.nameA ??
+      d.nameE;
+
     this.vm = {
       empNo: d.empNo,
-      name: this.vm && this.vm.name ? this.vm.name : d.nameA || d.nameE,
+      name: displayName,
       ...(this.vm ?? {}),
     } as EmployeeVM;
     // Enrich backend (fingerCode etc.) and timing plan name
@@ -217,8 +219,14 @@ export class UsersSearchComponent {
   private fetchBackendDetails(empNo: number) {
     this.svc.getEmployeeByEmpNo(empNo).subscribe({
       next: (d: EmployeeDetailsDto) => {
+        // Keep current name if present; otherwise prefer fullName from backend
+        const currentName = this.vm?.name ?? null;
+        const finalName =
+          currentName ?? d.fullName ?? d.nameA ?? d.nameE ?? null;
+
         this.vm = {
           ...(this.vm ?? { empNo: d.empNo, name: null }),
+          name: finalName,
           fingerCode: d.fingerCode ?? null,
           timingCode: d.timingCode ?? null,
           hasAllow: d.hasAllow ?? null,

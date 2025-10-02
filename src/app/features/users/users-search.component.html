@@ -74,7 +74,10 @@
                 }}
               </div>
               <div class="text-sm text-gray-600">
-                <span class="font-semibold">الحاله:</span> {{ d.status ?? "-" }}
+                <span class="font-semibold">الحاله:</span>
+                {{
+                  d.status === 1 ? "فعال" : d.status === 0 ? "غير فعال" : "-"
+                }}
               </div>
             </div>
           </ng-container>

@@ -50,6 +50,7 @@ export class UsersSearchComponent {
   vm: EmployeeVM | null = null;
   form!: FormGroup;
   showDetails = false;
+  results: EmployeeDetailsDto[] = [];
 
   constructor(private fb: FormBuilder, private svc: EmployeeSearchService) {
     this.form = this.fb.group({
@@ -62,6 +63,7 @@ export class UsersSearchComponent {
     this.error = null;
     this.vm = null;
     this.showDetails = false;
+    this.results = [];
 
     const { query, type } = this.form.value as SearchForm;
     const q = query?.trim();
@@ -219,17 +221,15 @@ export class UsersSearchComponent {
   private searchByName(name: string) {
     this.svc.searchEmployees({ name }).subscribe({
       next: (list) => {
+        this.loading = false;
         if (!list || list.length === 0) {
-          this.loading = false;
           this.error = 'لم يتم العثور على نتائج';
           return;
         }
-        const dto = list[0];
-        this.populateFromEmployeeDto(dto);
-        // Only enrich names from DB2 if backend did not include fullName
-        if (!dto.fullName) {
-          this.enrichNamesFromDb2(dto.empNo);
-        }
+        // Keep the full list; wait for user selection
+        this.results = list;
+        this.vm = null;
+        this.showDetails = false;
       },
       error: () => {
         this.loading = false;
@@ -371,5 +371,13 @@ export class UsersSearchComponent {
 
   closeDetails() {
     this.showDetails = false;
+  }
+
+  selectResult(dto: EmployeeDetailsDto) {
+    this.error = null;
+    this.vm = null;
+    this.showDetails = false;
+    this.populateFromEmployeeDto(dto);
+    if (!dto.fullName) this.enrichNamesFromDb2(dto.empNo);
   }
 }

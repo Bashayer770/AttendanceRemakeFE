@@ -69,27 +69,25 @@ export class UsersSearchComponent {
     const isNumber = !Number.isNaN(asNum);
 
     if (isNumber) {
-      // Query by EmpNo and FingerCode in parallel; prefer EmpNo if both return results
+      // Run fingerCode and EmpNo in parallel; prefer fingerCode if both return
       forkJoin({
-        byEmpNo: this.svc.searchEmployees({ empNo: asNum }),
         byFinger: this.svc.searchByFinger(asNum),
+        byEmpNo: this.svc.searchEmployees({ empNo: asNum }),
       }).subscribe({
-        next: ({ byEmpNo, byFinger }) => {
-          const pickedFromEmpNo = byEmpNo && byEmpNo.length > 0;
-          const dto = pickedFromEmpNo ? byEmpNo[0] : byFinger && byFinger[0];
+        next: ({ byFinger, byEmpNo }) => {
+          const dto = (byFinger && byFinger[0]) || (byEmpNo && byEmpNo[0]);
           if (!dto) {
-            // fallback to external by EmpNo/LoginName
             this.queryByLoginOrDb2(q);
             return;
           }
-          // Populate and enrich
           this.populateFromEmployeeDto(dto);
           if (!dto.fullName) {
             this.enrichNamesFromDb2(dto.empNo);
           }
-
-          // If the result is from fingerCode, ensure details load by fingerCode path
-          if (!pickedFromEmpNo && dto.fingerCode) {
+          // If chosen dto came from fingerCode, ensure details load by fingerCode path
+          const cameFromFinger =
+            byFinger && byFinger.length > 0 && dto === byFinger[0];
+          if (cameFromFinger && dto.fingerCode) {
             this.svc.getEmployeeByFingerCode(dto.fingerCode).subscribe({
               next: (fdto) => {
                 if (!fdto) return;

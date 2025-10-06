@@ -26,24 +26,17 @@
       </div>
     </div>
 
-    <!-- Dates + Search button row -->
+    <!-- Month picker + Search -->
     <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
       <label class="text-gray-700">
-        <span class="font-semibold">من تاريخ</span>
+        <span class="font-semibold">الشهر</span>
         <input
-          type="date"
-          [(ngModel)]="fromDate"
+          type="month"
+          [(ngModel)]="month"
           class="mt-1 w-full border rounded px-3 py-2"
         />
       </label>
-      <label class="text-gray-700">
-        <span class="font-semibold">إلى تاريخ</span>
-        <input
-          type="date"
-          [(ngModel)]="toDate"
-          class="mt-1 w-full border rounded px-3 py-2"
-        />
-      </label>
+      <div></div>
       <div class="flex justify-start">
         <button
           class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 arabic-text"
@@ -62,18 +55,17 @@
             <th class="py-2 px-3 text-right">اليوم</th>
             <th class="py-2 px-3 text-right">وقت الدخول</th>
             <th class="py-2 px-3 text-right">وقت الخروج</th>
-            <th class="py-2 px-3 text-right">الدقائق</th>
-            <th class="py-2 px-3 text-right">الخصم</th>
+            <th class="py-2 px-3 text-right">الخصم (دقائق)</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngIf="loading">
-            <td colspan="5" class="py-4 px-3 text-center text-gray-500">
+            <td colspan="4" class="py-4 px-3 text-center text-gray-500">
               ...جاري التحميل
             </td>
           </tr>
           <tr *ngIf="!loading && (!rows || rows.length === 0)">
-            <td colspan="5" class="py-4 px-3 text-center text-gray-400">
+            <td colspan="4" class="py-4 px-3 text-center text-gray-400">
               لا توجد بيانات
             </td>
           </tr>
@@ -81,7 +73,6 @@
             <td class="py-2 px-3">{{ r.day || "-" }}</td>
             <td class="py-2 px-3">{{ r.inTime || "-" }}</td>
             <td class="py-2 px-3">{{ r.outTime || "-" }}</td>
-            <td class="py-2 px-3">{{ r.minutes ?? "-" }}</td>
             <td class="py-2 px-3">{{ r.deduction ?? "-" }}</td>
           </tr>
         </tbody>

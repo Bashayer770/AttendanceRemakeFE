@@ -4,11 +4,9 @@ import { Observable, of } from 'rxjs';
 import { API } from './index';
 import { Attendance } from '../models/attendance';
 
-export interface AttendanceLog {
-  ioDate?: string;
-  inTime?: string;
-  outTime?: string;
-  minutes?: number;
+export interface LateDay {
+  date: string;
+  signs: string[]; // e.g., ["08:11:13Tr1", "08:12:16Tr0"]
 }
 
 export interface AttendanceResponse {
@@ -17,8 +15,12 @@ export interface AttendanceResponse {
 }
 
 export interface Deductions {
-  day?: string;
-  amount?: number;
+  day: string;
+  late: number;
+  endWorkExcuse: number;
+  duringWorkExcuse: number;
+  forgetIn: number;
+  forgetOut: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -29,8 +31,8 @@ export class AttendanceService {
     user: string,
     startDate: string,
     endDate: string
-  ): Observable<AttendanceLog[]> {
-    return this.http.get<AttendanceLog[]>(
+  ): Observable<LateDay[]> {
+    return this.http.get<LateDay[]>(
       API.ATTENDANCE.GET_LATE_RECORD(user, startDate, endDate)
     );
   }
@@ -57,7 +59,6 @@ export class AttendanceService {
 
   // Backward compatibility for Home/User component
   getByFingerCode(fingerCode: number): Observable<Attendance[]> {
-    // No direct endpoint for this in current API; return empty until wired
     return of([]);
   }
 }

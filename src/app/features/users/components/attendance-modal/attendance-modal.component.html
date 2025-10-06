@@ -2,9 +2,9 @@
   *ngIf="isVisible"
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
 >
-  <div class="bg-white rounded-xl shadow-lg w-full max-w-5xl p-6" dir="rtl">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-7xl p-8" dir="rtl">
     <!-- Header with centered title and right-aligned close button -->
-    <div class="relative mb-6">
+    <div class="relative mb-10">
       <h3 class="text-xl font-semibold absolute left-1/2 -translate-x-1/2">
         كشف الحضور
       </h3>
@@ -17,7 +17,7 @@
     </div>
 
     <!-- Employee identity -->
-    <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div class="text-gray-700">
         <span class="font-semibold">الاسم:</span> {{ empName || "-" }}
       </div>

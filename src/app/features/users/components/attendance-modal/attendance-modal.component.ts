@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   AttendanceService,
-  LateDay,
+  LateExcuseDay,
   Deductions,
 } from '../../../../services/attendanceService';
 
@@ -55,7 +55,6 @@ export class AttendanceModalComponent {
       label: labels[i],
     }));
     this.selectedMonth = now.getMonth() + 1;
-    // Offer a sensible year range (current and +/- 2 years)
     this.years = [year - 2, year - 1, year, year + 1];
     this.selectedYear = year;
   }
@@ -84,75 +83,72 @@ export class AttendanceModalComponent {
     this.loading = true;
     const user = this.loginName;
 
-    this.attendance.getLateRecord(user, range.start, range.end).subscribe({
-      next: (lateDays: LateDay[]) => {
-        const byDay: Record<
-          string,
-          {
-            day?: string;
-            inTime?: string;
-            outTime?: string;
-            deduction?: number;
-          }
-        > = {};
-        for (const d of lateDays || []) {
-          const key = d.date;
-          byDay[key] = byDay[key] || { day: key };
-          const inTimes = (d.signs || [])
-            .filter((s) => s.endsWith('Tr1'))
-            .map((s) => s.replace('Tr1', ''));
-          const outTimes = (d.signs || [])
-            .filter((s) => s.endsWith('Tr0'))
-            .map((s) => s.replace('Tr0', ''));
-          byDay[key].inTime = inTimes.length > 0 ? inTimes[0] : undefined;
-          byDay[key].outTime =
-            outTimes.length > 0 ? outTimes[outTimes.length - 1] : undefined;
-        }
-
-        const isWeekend = (dayStr: string | undefined) => {
-          if (!dayStr) return false;
-          const d = new Date(dayStr + 'T00:00:00');
-          const wd = d.getDay(); // 0=Sun ... 5=Fri, 6=Sat
-          return wd === 5 || wd === 6;
-        };
-
-        this.attendance.getDeductions(user, range.start, range.end).subscribe({
-          next: (ded: Deductions[]) => {
-            for (const d of ded || []) {
-              const key = d.day;
-              byDay[key] = byDay[key] || { day: key };
-              byDay[key].deduction = d.late ?? byDay[key].deduction;
+    this.attendance
+      .getLateExcuseRecord(user, range.start, range.end)
+      .subscribe({
+        next: (days: LateExcuseDay[]) => {
+          const byDay: Record<
+            string,
+            {
+              day?: string;
+              inTime?: string;
+              outTime?: string;
+              deduction?: number;
             }
-            const daysInMonth = new Date(
-              this.selectedYear,
-              this.selectedMonth,
-              0
-            ).getDate();
-            const pad = (n: number) => String(n).padStart(2, '0');
-            this.rows = Array.from({ length: daysInMonth }, (_, i) => {
-              const dayStr = `${range.base}-${pad(i + 1)}`;
-              return byDay[dayStr] || { day: dayStr };
-            }).filter((r) => !isWeekend(r.day));
-            this.loading = false;
-          },
-          error: () => {
-            const daysInMonth = new Date(
-              this.selectedYear,
-              this.selectedMonth,
-              0
-            ).getDate();
-            const pad = (n: number) => String(n).padStart(2, '0');
-            this.rows = Array.from({ length: daysInMonth }, (_, i) => {
-              const dayStr = `${range.base}-${pad(i + 1)}`;
-              return byDay[dayStr] || { day: dayStr };
-            }).filter((r) => !isWeekend(r.day));
-            this.loading = false;
-          },
-        });
-      },
-      error: () => {
-        this.loading = false;
-      },
-    });
+          > = {};
+          for (const d of days || []) {
+            const key = d.day;
+            byDay[key] = byDay[key] || { day: key };
+            byDay[key].inTime = d.in || undefined;
+            byDay[key].outTime = d.out || undefined;
+          }
+
+          const isWeekend = (dayStr: string | undefined) => {
+            if (!dayStr) return false;
+            const dt = new Date(dayStr + 'T00:00:00');
+            const wd = dt.getDay();
+            return wd === 5 || wd === 6; // Fri/Sat
+          };
+
+          this.attendance
+            .getDeductions(user, range.start, range.end)
+            .subscribe({
+              next: (ded: Deductions[]) => {
+                for (const d of ded || []) {
+                  const key = d.day;
+                  byDay[key] = byDay[key] || { day: key };
+                  byDay[key].deduction = d.late ?? byDay[key].deduction;
+                }
+                const daysInMonth = new Date(
+                  this.selectedYear,
+                  this.selectedMonth,
+                  0
+                ).getDate();
+                const pad = (n: number) => String(n).padStart(2, '0');
+                this.rows = Array.from({ length: daysInMonth }, (_, i) => {
+                  const dayStr = `${range.base}-${pad(i + 1)}`;
+                  return byDay[dayStr] || { day: dayStr };
+                }).filter((r) => !isWeekend(r.day));
+                this.loading = false;
+              },
+              error: () => {
+                const daysInMonth = new Date(
+                  this.selectedYear,
+                  this.selectedMonth,
+                  0
+                ).getDate();
+                const pad = (n: number) => String(n).padStart(2, '0');
+                this.rows = Array.from({ length: daysInMonth }, (_, i) => {
+                  const dayStr = `${range.base}-${pad(i + 1)}`;
+                  return byDay[dayStr] || { day: dayStr };
+                }).filter((r) => !isWeekend(r.day));
+                this.loading = false;
+              },
+            });
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
   }
 }

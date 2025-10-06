@@ -9,9 +9,11 @@ export interface LateDay {
   signs: string[]; // e.g., ["08:11:13Tr1", "08:12:16Tr0"]
 }
 
-export interface AttendanceResponse {
-  day?: string;
-  minutes?: number;
+export interface LateExcuseDay {
+  day: string;
+  in: string | null;
+  out: string | null;
+  excuses: any[];
 }
 
 export interface Deductions {
@@ -41,8 +43,8 @@ export class AttendanceService {
     user: string,
     startDate: string,
     endDate: string
-  ): Observable<AttendanceResponse[]> {
-    return this.http.get<AttendanceResponse[]>(
+  ): Observable<LateExcuseDay[]> {
+    return this.http.get<LateExcuseDay[]>(
       API.ATTENDANCE.GET_LATE_EXCUSE_RECORD(user, startDate, endDate)
     );
   }

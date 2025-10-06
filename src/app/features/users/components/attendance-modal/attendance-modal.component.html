@@ -1,0 +1,27 @@
+<div
+  *ngIf="isVisible"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+>
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-3xl p-6" dir="rtl">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-semibold">كشف الحضور</h3>
+      <button
+        class="text-gray-500 hover:text-red-600 text-2xl"
+        (click)="onClose()"
+      >
+        &times;
+      </button>
+    </div>
+
+    <div class="mb-4">
+      <div class="text-gray-700">
+        <span class="font-semibold">الاسم:</span> {{ empName || "-" }}
+      </div>
+      <div class="text-gray-700">
+        <span class="font-semibold">الرقم الوظيفي:</span> {{ empNo || "-" }}
+      </div>
+    </div>
+
+    <div class="text-gray-400">(سيتم عرض سجل الحضور هنا)</div>
+  </div>
+</div>

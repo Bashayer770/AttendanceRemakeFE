@@ -13,6 +13,7 @@ import {
   EmployeeDetailsDto,
 } from '../../services/employee-search.service';
 import { Observable, forkJoin, of, switchMap } from 'rxjs';
+import { AttendanceModalComponent } from './components/attendance-modal/attendance-modal.component';
 
 interface SearchForm {
   query: string;
@@ -42,7 +43,7 @@ interface EmployeeVM {
 @Component({
   selector: 'app-users-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AttendanceModalComponent],
   templateUrl: './users-search.component.html',
 })
 export class UsersSearchComponent {
@@ -54,6 +55,7 @@ export class UsersSearchComponent {
   results: EmployeeDetailsDto[] = [];
   hasSearched = false;
   selectedEmpNo: number | null = null;
+  isAttendanceVisible = false;
 
   constructor(private fb: FormBuilder, private svc: EmployeeSearchService) {
     this.form = this.fb.group({
@@ -388,5 +390,13 @@ export class UsersSearchComponent {
     if (!dto.fullName) this.enrichNamesFromDb2(dto.empNo);
     this.showDetails = true;
     this.selectedEmpNo = dto.empNo;
+  }
+
+  openAttendance() {
+    this.isAttendanceVisible = true;
+  }
+
+  closeAttendance() {
+    this.isAttendanceVisible = false;
   }
 }

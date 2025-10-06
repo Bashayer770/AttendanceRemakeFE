@@ -109,11 +109,18 @@
             <div class="mt-4 flex justify-center">
               <button
                 type="button"
-                class="bg-primary text-white px-6 py-2 rounded"
+                class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 arabic-text"
+                (click)="openAttendance()"
               >
-                attendance
+                كشف الحضور
               </button>
             </div>
+            <app-attendance-modal
+              [isVisible]="isAttendanceVisible"
+              [empNo]="d.empNo || null"
+              [empName]="d.name || null"
+              (close)="closeAttendance()"
+            ></app-attendance-modal>
           </ng-container>
           <ng-template #noDetails>
             <div class="text-gray-400">لا توجد تفاصيل للعرض</div>

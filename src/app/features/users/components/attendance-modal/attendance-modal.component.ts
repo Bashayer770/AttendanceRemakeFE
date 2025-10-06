@@ -20,7 +20,8 @@ export class AttendanceModalComponent {
   @Input() loginName: string | null = null;
   @Output() close = new EventEmitter<void>();
 
-  month: string = ''; // format YYYY-MM
+  month: string = '';
+  months: Array<{ value: string; label: string }> = [];
 
   loading = false;
   rows: Array<{
@@ -30,7 +31,30 @@ export class AttendanceModalComponent {
     deduction?: number;
   }> = [];
 
-  constructor(private attendance: AttendanceService) {}
+  constructor(private attendance: AttendanceService) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const labels = [
+      'يناير',
+      'فبراير',
+      'مارس',
+      'إبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
+    ];
+    this.months = Array.from({ length: 12 }, (_, i) => ({
+      value: `${year}-${pad(i + 1)}`,
+      label: `${labels[i]} ${year}`,
+    }));
+    this.month = `${year}-${pad(now.getMonth() + 1)}`;
+  }
 
   onClose() {
     this.close.emit();
@@ -65,7 +89,6 @@ export class AttendanceModalComponent {
             deduction?: number;
           }
         > = {};
-
         for (const d of lateDays || []) {
           const key = d.date;
           byDay[key] = byDay[key] || { day: key };

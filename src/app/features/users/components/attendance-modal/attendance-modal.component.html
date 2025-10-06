@@ -16,67 +16,72 @@
       </button>
     </div>
 
-    <!-- Employee identity -->
-    <div class="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="text-gray-700">
-        <span class="font-semibold">الاسم:</span> {{ empName || "-" }}
+    <div class="max-h-[70vh] overflow-y-auto pr-1">
+      <!-- Employee identity -->
+      <div class="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="text-gray-700">
+          <span class="font-semibold">الاسم:</span> {{ empName || "-" }}
+        </div>
+        <div class="text-gray-700">
+          <span class="font-semibold">الرقم الوظيفي:</span> {{ empNo || "-" }}
+        </div>
       </div>
-      <div class="text-gray-700">
-        <span class="font-semibold">الرقم الوظيفي:</span> {{ empNo || "-" }}
-      </div>
-    </div>
 
-    <!-- Month picker + Search -->
-    <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-      <label class="text-gray-700">
-        <span class="font-semibold">الشهر</span>
-        <input
-          type="month"
-          [(ngModel)]="month"
-          class="mt-1 w-full border rounded px-3 py-2"
-        />
-      </label>
-      <div></div>
-      <div class="flex justify-start">
-        <button
-          class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 arabic-text"
-          (click)="fetchAttendance()"
-        >
-          بحث
-        </button>
+      <!-- Month picker + Search -->
+      <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+        <label class="text-gray-700">
+          <span class="font-semibold">الشهر</span>
+          <select
+            [(ngModel)]="month"
+            class="mt-1 w-full border rounded px-3 py-2"
+          >
+            <option *ngFor="let m of months" [value]="m.value">
+              {{ m.label }}
+            </option>
+          </select>
+        </label>
+        <div></div>
+        <div class="flex justify-start">
+          <button
+            class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 arabic-text"
+            (click)="fetchAttendance()"
+          >
+            بحث
+          </button>
+        </div>
       </div>
-    </div>
 
-    <!-- Table -->
-    <div class="overflow-auto border rounded-lg">
-      <table class="min-w-full">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="py-2 px-3 text-right">اليوم</th>
-            <th class="py-2 px-3 text-right">وقت الدخول</th>
-            <th class="py-2 px-3 text-right">وقت الخروج</th>
-            <th class="py-2 px-3 text-right">الخصم (دقائق)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngIf="loading">
-            <td colspan="4" class="py-4 px-3 text-center text-gray-500">
-              ...جاري التحميل
-            </td>
-          </tr>
-          <tr *ngIf="!loading && (!rows || rows.length === 0)">
-            <td colspan="4" class="py-4 px-3 text-center text-gray-400">
-              لا توجد بيانات
-            </td>
-          </tr>
-          <tr *ngFor="let r of rows" class="border-t">
-            <td class="py-2 px-3">{{ r.day || "-" }}</td>
-            <td class="py-2 px-3">{{ r.inTime || "-" }}</td>
-            <td class="py-2 px-3">{{ r.outTime || "-" }}</td>
-            <td class="py-2 px-3">{{ r.deduction ?? "-" }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Table -->
+      <div class="overflow-auto border rounded-lg">
+        <table class="min-w-full">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="py-2 px-3 text-right">اليوم</th>
+              <th class="py-2 px-3 text-right">وقت الدخول</th>
+              <th class="py-2 px-3 text-right">وقت الخروج</th>
+              <th class="py-2 px-3 text-right">الخصم (دقائق)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="loading">
+              <td colspan="4" class="py-4 px-3 text-center text-gray-500">
+                ...جاري التحميل
+              </td>
+            </tr>
+            <tr *ngIf="!loading && (!rows || rows.length === 0)">
+              <td colspan="4" class="py-4 px-3 text-center text-gray-400">
+                لا توجد بيانات
+              </td>
+            </tr>
+            <tr *ngFor="let r of rows" class="border-t">
+              <td class="py-2 px-3">{{ r.day || "-" }}</td>
+              <td class="py-2 px-3">{{ r.inTime || "-" }}</td>
+              <td class="py-2 px-3">{{ r.outTime || "-" }}</td>
+              <td class="py-2 px-3">{{ r.deduction ?? "-" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

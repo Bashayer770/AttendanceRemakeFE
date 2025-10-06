@@ -1,0 +1,40 @@
+<div class="w-full max-w-7xl bg-white shadow-lg px-8 pb-4 rounded-lg">
+  <div
+    class="bg-primary text-white text-center py-4 rounded-t-lg -mx-8 -mt-2 mb-8"
+  >
+    <h2 class="text-3xl font-sans arabic-text">الأقسام</h2>
+  </div>
+
+  <div class="min-h-[300px]">
+    <div *ngIf="loading" class="text-center text-gray-500 py-8">
+      ...جاري التحميل
+    </div>
+    <div *ngIf="error && !loading" class="text-center text-red-600 py-8">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error" class="max-h-[60vh] overflow-y-auto">
+      <table class="min-w-full">
+        <thead class="bg-primary sticky top-0 z-10 text-white">
+          <tr>
+            <th class="px-4 py-3 text-right">الرمز</th>
+            <th class="px-4 py-3 text-right">الاسم</th>
+            <th class="px-4 py-3 text-right">الاسم بالإنجليزية</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of departments" class="border-b hover:bg-slate-50">
+            <td class="px-4 py-3">{{ d.Code }}</td>
+            <td class="px-4 py-3">{{ d.Name }}</td>
+            <td class="px-4 py-3">{{ d.EnglishName || "-" }}</td>
+          </tr>
+          <tr *ngIf="departments.length === 0">
+            <td colspan="3" class="px-4 py-6 text-center text-gray-400">
+              لا توجد بيانات
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

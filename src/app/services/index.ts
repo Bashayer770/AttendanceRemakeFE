@@ -72,4 +72,8 @@ export const API = {
     GET_ALL: `${BASE_URL}/TimingPlans`,
     GET_BY_CODE: (code: number) => `${BASE_URL}/TimingPlans/${code}`,
   },
+
+  DEPARTMENTS: {
+    GET_ALL: `http://10.114.1.70/db2sqlws/api/lookups/departments`,
+  },
 };

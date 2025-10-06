@@ -1,0 +1,2 @@
+// Departments feature placeholder
+export {};

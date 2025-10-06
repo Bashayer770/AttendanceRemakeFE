@@ -78,6 +78,13 @@ export class AttendanceModalComponent {
     this.loading = true;
     const user = this.loginName;
 
+    const isWeekend = (dayStr: string | undefined) => {
+      if (!dayStr) return false;
+      const d = new Date(dayStr + 'T00:00:00');
+      const wd = d.getDay(); // 0=Sun ... 5=Fri, 6=Sat
+      return wd === 5 || wd === 6;
+    };
+
     this.attendance.getLateRecord(user, range.start, range.end).subscribe({
       next: (lateDays: LateDay[]) => {
         const byDay: Record<
@@ -92,8 +99,6 @@ export class AttendanceModalComponent {
         for (const d of lateDays || []) {
           const key = d.date;
           byDay[key] = byDay[key] || { day: key };
-          // Parse signs into first IN (Tr0) and last OUT (Tr1) if available
-          // Tr0 is out and Tr1 is in per instruction? Given text: tr1 is in, tr0 is out
           const inTimes = (d.signs || [])
             .filter((s) => s.endsWith('Tr1'))
             .map((s) => s.replace('Tr1', ''));
@@ -112,25 +117,23 @@ export class AttendanceModalComponent {
               byDay[key] = byDay[key] || { day: key };
               byDay[key].deduction = d.late ?? byDay[key].deduction;
             }
-            // Expand to all days of month
             const [yy, mm] = this.month.split('-').map(Number);
             const daysInMonth = new Date(yy, mm, 0).getDate();
             const pad = (n: number) => String(n).padStart(2, '0');
             this.rows = Array.from({ length: daysInMonth }, (_, i) => {
               const dayStr = `${this.month}-${pad(i + 1)}`;
               return byDay[dayStr] || { day: dayStr };
-            });
+            }).filter((r) => !isWeekend(r.day));
             this.loading = false;
           },
           error: () => {
-            // Same expansion without deductions
             const [yy, mm] = this.month.split('-').map(Number);
             const daysInMonth = new Date(yy, mm, 0).getDate();
             const pad = (n: number) => String(n).padStart(2, '0');
             this.rows = Array.from({ length: daysInMonth }, (_, i) => {
               const dayStr = `${this.month}-${pad(i + 1)}`;
               return byDay[dayStr] || { day: dayStr };
-            });
+            }).filter((r) => !isWeekend(r.day));
             this.loading = false;
           },
         });

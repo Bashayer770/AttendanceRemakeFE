@@ -42,6 +42,22 @@ export const API = {
       )}&startDate=${encodeURIComponent(
         startDate
       )}&EndDate=${encodeURIComponent(endDate)}`,
+    GET_LATE_EXCUSE_RECORD: (
+      user: string,
+      startDate: string,
+      endDate: string
+    ) =>
+      `${BASE_URL}/Attendances/GetLateExcuseRecord?user=${encodeURIComponent(
+        user
+      )}&startDate=${encodeURIComponent(
+        startDate
+      )}&EndDate=${encodeURIComponent(endDate)}`,
+    GET_DEDUCTIONS: (user: string, startDate: string, endDate: string) =>
+      `${BASE_URL}/Attendances/GetDeductions?user=${encodeURIComponent(
+        user
+      )}&startDate=${encodeURIComponent(
+        startDate
+      )}&EndDate=${encodeURIComponent(endDate)}`,
   },
 
   EMPLOYEES: {

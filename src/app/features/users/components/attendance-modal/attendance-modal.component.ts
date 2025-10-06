@@ -20,8 +20,10 @@ export class AttendanceModalComponent {
   @Input() loginName: string | null = null;
   @Output() close = new EventEmitter<void>();
 
-  month: string = '';
-  months: Array<{ value: string; label: string }> = [];
+  selectedMonth: number = 1; // 1-12
+  selectedYear: number = new Date().getFullYear();
+  months: Array<{ value: number; label: string }> = [];
+  years: number[] = [];
 
   loading = false;
   rows: Array<{
@@ -34,7 +36,6 @@ export class AttendanceModalComponent {
   constructor(private attendance: AttendanceService) {
     const now = new Date();
     const year = now.getFullYear();
-    const pad = (n: number) => String(n).padStart(2, '0');
     const labels = [
       'يناير',
       'فبراير',
@@ -50,40 +51,38 @@ export class AttendanceModalComponent {
       'ديسمبر',
     ];
     this.months = Array.from({ length: 12 }, (_, i) => ({
-      value: `${year}-${pad(i + 1)}`,
-      label: `${labels[i]} ${year}`,
+      value: i + 1,
+      label: labels[i],
     }));
-    this.month = `${year}-${pad(now.getMonth() + 1)}`;
+    this.selectedMonth = now.getMonth() + 1;
+    // Offer a sensible year range (current and +/- 2 years)
+    this.years = [year - 2, year - 1, year, year + 1];
+    this.selectedYear = year;
   }
 
   onClose() {
     this.close.emit();
   }
 
-  private getMonthRange(ym: string): { start: string; end: string } | null {
-    // ym format: YYYY-MM
-    if (!/^\d{4}-\d{2}$/.test(ym)) return null;
-    const [y, m] = ym.split('-').map(Number);
+  private getMonthRange(
+    y: number,
+    m: number
+  ): { start: string; end: string; base: string } | null {
+    if (m < 1 || m > 12) return null;
     const start = new Date(y, m - 1, 1);
-    const end = new Date(y, m, 0); // last day of month
+    const end = new Date(y, m, 0);
     const iso = (d: Date) => d.toISOString().slice(0, 10);
-    return { start: iso(start), end: iso(end) };
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return { start: iso(start), end: iso(end), base: `${y}-${pad(m)}` };
   }
 
   fetchAttendance() {
-    if (!this.loginName || !this.month) return;
-    const range = this.getMonthRange(this.month);
+    if (!this.loginName) return;
+    const range = this.getMonthRange(this.selectedYear, this.selectedMonth);
     if (!range) return;
 
     this.loading = true;
     const user = this.loginName;
-
-    const isWeekend = (dayStr: string | undefined) => {
-      if (!dayStr) return false;
-      const d = new Date(dayStr + 'T00:00:00');
-      const wd = d.getDay(); // 0=Sun ... 5=Fri, 6=Sat
-      return wd === 5 || wd === 6;
-    };
 
     this.attendance.getLateRecord(user, range.start, range.end).subscribe({
       next: (lateDays: LateDay[]) => {
@@ -110,6 +109,13 @@ export class AttendanceModalComponent {
             outTimes.length > 0 ? outTimes[outTimes.length - 1] : undefined;
         }
 
+        const isWeekend = (dayStr: string | undefined) => {
+          if (!dayStr) return false;
+          const d = new Date(dayStr + 'T00:00:00');
+          const wd = d.getDay(); // 0=Sun ... 5=Fri, 6=Sat
+          return wd === 5 || wd === 6;
+        };
+
         this.attendance.getDeductions(user, range.start, range.end).subscribe({
           next: (ded: Deductions[]) => {
             for (const d of ded || []) {
@@ -117,21 +123,27 @@ export class AttendanceModalComponent {
               byDay[key] = byDay[key] || { day: key };
               byDay[key].deduction = d.late ?? byDay[key].deduction;
             }
-            const [yy, mm] = this.month.split('-').map(Number);
-            const daysInMonth = new Date(yy, mm, 0).getDate();
+            const daysInMonth = new Date(
+              this.selectedYear,
+              this.selectedMonth,
+              0
+            ).getDate();
             const pad = (n: number) => String(n).padStart(2, '0');
             this.rows = Array.from({ length: daysInMonth }, (_, i) => {
-              const dayStr = `${this.month}-${pad(i + 1)}`;
+              const dayStr = `${range.base}-${pad(i + 1)}`;
               return byDay[dayStr] || { day: dayStr };
             }).filter((r) => !isWeekend(r.day));
             this.loading = false;
           },
           error: () => {
-            const [yy, mm] = this.month.split('-').map(Number);
-            const daysInMonth = new Date(yy, mm, 0).getDate();
+            const daysInMonth = new Date(
+              this.selectedYear,
+              this.selectedMonth,
+              0
+            ).getDate();
             const pad = (n: number) => String(n).padStart(2, '0');
             this.rows = Array.from({ length: daysInMonth }, (_, i) => {
-              const dayStr = `${this.month}-${pad(i + 1)}`;
+              const dayStr = `${range.base}-${pad(i + 1)}`;
               return byDay[dayStr] || { day: dayStr };
             }).filter((r) => !isWeekend(r.day));
             this.loading = false;

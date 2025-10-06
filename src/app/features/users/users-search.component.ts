@@ -36,6 +36,7 @@ interface EmployeeVM {
   locCode?: number | null;
   // Derived labels
   timingPlanName?: string | null;
+  loginName?: string | null;
 }
 
 @Component({
@@ -287,6 +288,7 @@ export class UsersSearchComponent {
           role,
           deptName,
           sectorName,
+          loginName: (raw as any).LoginName ?? null,
           ...(this.vm ?? {}),
         } as EmployeeVM;
       },
@@ -294,6 +296,7 @@ export class UsersSearchComponent {
         this.vm = {
           empNo: raw.EmpNo,
           name: raw.FullName,
+          loginName: (raw as any).LoginName ?? null,
           ...(this.vm ?? {}),
         } as EmployeeVM;
       },

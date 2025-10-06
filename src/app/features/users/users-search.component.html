@@ -51,12 +51,23 @@
           <h3 class="text-xl font-semibold mb-3">تفاصيل الموظف</h3>
           <ng-container *ngIf="vm as d; else noDetails">
             <div class="space-y-2 text-gray-800">
-              <div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="inline-block w-2.5 h-2.5 rounded-full"
+                  [ngClass]="{
+                    'bg-green-500': d.status === 1,
+                    'bg-red-500': d.status === 0
+                  }"
+                ></span>
                 <span class="font-semibold">الاسم:</span> {{ d.name || "-" }}
               </div>
               <div>
                 <span class="font-semibold">الرقم الوظيفي:</span>
                 {{ d.empNo || "-" }}
+              </div>
+              <div>
+                <span class="font-semibold">اسم الدخول:</span>
+                {{ d.loginName || "-" }}
               </div>
               <div>
                 <span class="font-semibold">الوظيفة:</span> {{ d.role || "-" }}
@@ -118,8 +129,17 @@
             *ngFor="let r of results"
             (click)="selectResult(r)"
           >
-            <div class="font-semibold">
-              {{ r.fullName || r.nameA || r.nameE }}
+            <div class="flex items-center gap-2">
+              <span
+                class="inline-block w-2.5 h-2.5 rounded-full"
+                [ngClass]="{
+                  'bg-green-500': r.status === 1,
+                  'bg-red-500': r.status === 0
+                }"
+              ></span>
+              <div class="font-semibold">
+                {{ r.fullName || r.nameA || r.nameE }}
+              </div>
             </div>
             <div class="text-sm text-gray-500">رقم وظيفي: {{ r.empNo }}</div>
           </div>

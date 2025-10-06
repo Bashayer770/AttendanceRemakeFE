@@ -27,67 +27,67 @@
     <!-- Table -->
     <div class="rounded-lg shadow-sm border border-gray-200">
       <div class="max-h-[60vh] overflow-y-auto">
-        <table class="min-w-full">
+      <table class="min-w-full">
           <thead class="bg-primary sticky top-0 z-10">
-            <tr>
-              <th
-                class="py-3 px-6 text-right text-white font-semibold arabic-text"
-              >
-                رقم الجهاز
-              </th>
-              <th
-                class="py-3 px-6 text-right text-white font-semibold arabic-text"
-              >
-                الاسم العربي
-              </th>
-              <th
-                class="py-3 px-6 text-right text-white font-semibold arabic-text"
-              >
-                الاسم الإنجليزي
-              </th>
-              <th
-                class="py-3 px-6 text-right text-white font-semibold arabic-text"
-              >
-                الموقع
-              </th>
-              <th
-                class="py-3 px-6 text-right text-white font-semibold arabic-text"
-              >
-                الدور
-              </th>
-              <th
-                class="py-3 px-6 text-center text-white font-semibold arabic-text"
-              >
-                الإجراءات
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr *ngIf="filteredNodes.length === 0">
-              <td colspan="6" class="text-center py-6 text-gray-400">
-                لا توجد بيانات
-              </td>
-            </tr>
+          <tr>
+            <th
+              class="py-3 px-6 text-right text-white font-semibold arabic-text"
+            >
+              رقم الجهاز
+            </th>
+            <th
+              class="py-3 px-6 text-right text-white font-semibold arabic-text"
+            >
+              الاسم العربي
+            </th>
+            <th
+              class="py-3 px-6 text-right text-white font-semibold arabic-text"
+            >
+              الاسم الإنجليزي
+            </th>
+            <th
+              class="py-3 px-6 text-right text-white font-semibold arabic-text"
+            >
+              الموقع
+            </th>
+            <th
+              class="py-3 px-6 text-right text-white font-semibold arabic-text"
+            >
+              الدور
+            </th>
+            <th
+              class="py-3 px-6 text-center text-white font-semibold arabic-text"
+            >
+              الإجراءات
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <tr *ngIf="filteredNodes.length === 0">
+            <td colspan="6" class="text-center py-6 text-gray-400">
+              لا توجد بيانات
+            </td>
+          </tr>
 
-            <tr *ngFor="let n of filteredNodes">
-              <td class="py-3 px-6 font-mono">{{ n.serialNo }}</td>
-              <td class="py-3 px-6 arabic-text">{{ n.descA }}</td>
-              <td class="py-3 px-6">{{ n.descE }}</td>
-              <td class="py-3 px-6">{{ n.locCode }}</td>
-              <td class="py-3 px-6">{{ n.floor || "-" }}</td>
-              <td class="py-3 px-6 flex gap-2 justify-center">
-                <app-edit-square
-                  (click)="openEditModal(n)"
-                  class="w-10 h-10 px-4 py-3 text-primary cursor-pointer hover:text-cyan-700"
-                ></app-edit-square>
-                <app-delete-filled
-                  (click)="openDeleteModal(n.serialNo)"
-                  class="w-10 h-10 px-4 py-3 text-red-600 cursor-pointer hover:text-red-400"
-                ></app-delete-filled>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <tr *ngFor="let n of filteredNodes">
+            <td class="py-3 px-6 font-mono">{{ n.serialNo }}</td>
+            <td class="py-3 px-6 arabic-text">{{ n.descA }}</td>
+            <td class="py-3 px-6">{{ n.descE }}</td>
+            <td class="py-3 px-6">{{ n.locCode }}</td>
+            <td class="py-3 px-6">{{ n.floor || "-" }}</td>
+            <td class="py-3 px-6 flex gap-2 justify-center">
+              <app-edit-square
+                (click)="openEditModal(n)"
+                class="w-10 h-10 px-4 py-3 text-primary cursor-pointer hover:text-cyan-700"
+              ></app-edit-square>
+              <app-delete-filled
+                (click)="openDeleteModal(n.serialNo)"
+                class="w-10 h-10 px-4 py-3 text-red-600 cursor-pointer hover:text-red-400"
+              ></app-delete-filled>
+            </td>
+          </tr>
+        </tbody>
+      </table>
       </div>
     </div>
   </div>

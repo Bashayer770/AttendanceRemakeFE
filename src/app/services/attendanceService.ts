@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { API } from './index';
+import { Attendance } from '../models/attendance';
 
 export interface AttendanceLog {
   ioDate?: string;
@@ -52,5 +53,11 @@ export class AttendanceService {
     return this.http.get<Deductions[]>(
       API.ATTENDANCE.GET_DEDUCTIONS(user, startDate, endDate)
     );
+  }
+
+  // Backward compatibility for Home/User component
+  getByFingerCode(fingerCode: number): Observable<Attendance[]> {
+    // No direct endpoint for this in current API; return empty until wired
+    return of([]);
   }
 }

@@ -30,7 +30,7 @@ export class AttendanceModalComponent {
     outTime?: string;
     minutes?: number;
     deduction?: number;
-  }>[] = [];
+  }> = [];
 
   constructor(private attendance: AttendanceService) {}
 

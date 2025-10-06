@@ -2,7 +2,7 @@
   *ngIf="isVisible"
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
 >
-  <div class="bg-white rounded-xl shadow-lg w-full max-w-3xl p-6" dir="rtl">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-5xl p-6" dir="rtl">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-xl font-semibold">كشف الحضور</h3>
       <button
@@ -13,13 +13,40 @@
       </button>
     </div>
 
-    <div class="mb-4">
+    <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div class="text-gray-700">
         <span class="font-semibold">الاسم:</span> {{ empName || "-" }}
       </div>
       <div class="text-gray-700">
         <span class="font-semibold">الرقم الوظيفي:</span> {{ empNo || "-" }}
       </div>
+    </div>
+
+    <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <label class="text-gray-700">
+        <span class="font-semibold">من تاريخ</span>
+        <input
+          type="date"
+          [(ngModel)]="fromDate"
+          class="mt-1 w-full border rounded px-3 py-2"
+        />
+      </label>
+      <label class="text-gray-700">
+        <span class="font-semibold">إلى تاريخ</span>
+        <input
+          type="date"
+          [(ngModel)]="toDate"
+          class="mt-1 w-full border rounded px-3 py-2"
+        />
+      </label>
+    </div>
+
+    <div class="flex justify-center mb-4">
+      <button
+        class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 arabic-text"
+      >
+        بحث
+      </button>
     </div>
 
     <div class="text-gray-400">(سيتم عرض سجل الحضور هنا)</div>

@@ -18,6 +18,7 @@ export class AttendanceModalComponent {
   @Input() isVisible: boolean = false;
   @Input() empNo: number | null = null;
   @Input() empName: string | null = null;
+  @Input() loginName: string | null = null;
   @Output() close = new EventEmitter<void>();
 
   fromDate: string = '';
@@ -39,10 +40,10 @@ export class AttendanceModalComponent {
   }
 
   fetchAttendance() {
-    if (!this.empName || !this.fromDate || !this.toDate) return;
+    if (!this.loginName || !this.fromDate || !this.toDate) return;
     this.loading = true;
 
-    const user = this.empName; // backend expects loginName
+    const user = this.loginName; // backend expects loginName
 
     this.attendance.getLateRecord(user, this.fromDate, this.toDate).subscribe({
       next: (logs: AttendanceLog[]) => {

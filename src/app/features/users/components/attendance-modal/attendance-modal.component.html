@@ -3,17 +3,21 @@
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
 >
   <div class="bg-white rounded-xl shadow-lg w-full max-w-5xl p-6" dir="rtl">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-xl font-semibold">كشف الحضور</h3>
+    <!-- Header with centered title and right-aligned close button -->
+    <div class="relative mb-6">
+      <h3 class="text-xl font-semibold absolute left-1/2 -translate-x-1/2">
+        كشف الحضور
+      </h3>
       <button
-        class="text-gray-500 hover:text-red-600 text-2xl"
+        class="absolute top-0 right-0 text-gray-500 hover:text-red-600 text-2xl"
         (click)="onClose()"
       >
         &times;
       </button>
     </div>
 
-    <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <!-- Employee identity -->
+    <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div class="text-gray-700">
         <span class="font-semibold">الاسم:</span> {{ empName || "-" }}
       </div>
@@ -22,7 +26,8 @@
       </div>
     </div>
 
-    <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <!-- Dates + Search button row -->
+    <div class="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
       <label class="text-gray-700">
         <span class="font-semibold">من تاريخ</span>
         <input
@@ -39,14 +44,13 @@
           class="mt-1 w-full border rounded px-3 py-2"
         />
       </label>
-    </div>
-
-    <div class="flex justify-center mb-4">
-      <button
-        class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 arabic-text"
-      >
-        بحث
-      </button>
+      <div class="flex justify-start">
+        <button
+          class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 arabic-text"
+        >
+          بحث
+        </button>
+      </div>
     </div>
 
     <div class="text-gray-400">(سيتم عرض سجل الحضور هنا)</div>

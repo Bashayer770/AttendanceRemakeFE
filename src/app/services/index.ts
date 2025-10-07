@@ -67,6 +67,7 @@ export const API = {
       `${BASE_URL}/Employees/search?fingerCode=${encodeURIComponent(
         fingerCode
       )}`,
+    UPDATE: (empNo: number) => `${BASE_URL}/Employees/${empNo}`,
   },
   TIMING_PLANS: {
     GET_ALL: `${BASE_URL}/TimingPlans`,

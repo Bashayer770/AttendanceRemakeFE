@@ -16,6 +16,7 @@ import { Observable, forkJoin, of, switchMap } from 'rxjs';
 import { AttendanceModalComponent } from './components/attendance-modal/attendance-modal.component';
 import { EditUserModalComponent } from './components/edit-user-modal/edit-user-modal.component';
 import { EditSquareComponent } from '../../../assets/SVG/editSVG.component';
+import { API } from '../../../../../environments/api';
 
 interface SearchForm {
   query: string;
@@ -424,15 +425,30 @@ export class UsersSearchComponent {
     hasAllow: boolean | null;
     status: number | null;
   }) {
-    // TODO: call backend update endpoint when available; update local vm for now
-    if (!this.vm) return;
-    this.vm = {
-      ...this.vm,
-      fingerCode: payload.fingerCode ?? this.vm.fingerCode ?? null,
-      timingCode: payload.timingCode ?? this.vm.timingCode ?? null,
-      hasAllow: payload.hasAllow ?? this.vm.hasAllow ?? null,
-      status: payload.status ?? this.vm.status ?? null,
-    } as any;
-    this.isEditVisible = false;
+    if (!this.vm || !payload.empNo) return;
+
+    const body: any = {
+      fingerCode: payload.fingerCode,
+      timingCode: payload.timingCode,
+      hasAllow: payload.hasAllow,
+      status: payload.status,
+    };
+
+    this.svc.http.put(API.EMPLOYEES.UPDATE(payload.empNo), body).subscribe({
+      next: () => {
+        this.vm = {
+          ...this.vm,
+          fingerCode: payload.fingerCode ?? this.vm.fingerCode ?? null,
+          timingCode: payload.timingCode ?? this.vm.timingCode ?? null,
+          hasAllow: payload.hasAllow ?? this.vm.hasAllow ?? null,
+          status: payload.status ?? this.vm.status ?? null,
+        } as any;
+        this.isEditVisible = false;
+      },
+      error: () => {
+        // keep modal open or close as per UX; closing for now
+        this.isEditVisible = false;
+      },
+    });
   }
 }

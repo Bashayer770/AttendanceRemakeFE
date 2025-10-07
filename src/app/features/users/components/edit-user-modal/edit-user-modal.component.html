@@ -2,7 +2,10 @@
   *ngIf="isVisible"
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
 >
-  <div class="bg-white rounded-xl shadow-lg w-full max-w-xl p-6" dir="rtl">
+  <div
+    class="bg-white rounded-xl shadow-lg w-full max-w-xl p-6 overflow-visible"
+    dir="rtl"
+  >
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-xl font-semibold">تعديل بيانات الموظف</h3>
       <button
@@ -13,7 +16,7 @@
       </button>
     </div>
 
-    <form [formGroup]="form" class="space-y-4">
+    <form [formGroup]="form" class="space-y-4 pb-10">
       <label class="block">
         <span class="font-semibold">رقم البصمة</span>
         <input

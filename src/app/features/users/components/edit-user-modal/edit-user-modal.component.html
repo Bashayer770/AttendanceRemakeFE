@@ -1,0 +1,78 @@
+<div
+  *ngIf="isVisible"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+>
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-xl p-6" dir="rtl">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-semibold">تعديل بيانات الموظف</h3>
+      <button
+        class="text-gray-500 hover:text-red-600 text-2xl"
+        (click)="onClose()"
+      >
+        &times;
+      </button>
+    </div>
+
+    <form [formGroup]="form" class="space-y-4">
+      <label class="block">
+        <span class="font-semibold">رقم البصمة</span>
+        <input
+          type="text"
+          formControlName="fingerCode"
+          class="mt-1 w-full border rounded px-3 py-2"
+        />
+      </label>
+
+      <label class="block">
+        <span class="font-semibold">خطة الدوام</span>
+        <select
+          formControlName="timingCode"
+          class="mt-1 w-full border rounded px-3 py-2"
+        >
+          <option *ngFor="let tp of timingPlans" [value]="tp.code">
+            {{ tp.descA }}
+          </option>
+        </select>
+      </label>
+
+      <label class="block">
+        <span class="font-semibold">تخفيف</span>
+        <select
+          formControlName="hasAllow"
+          class="mt-1 w-full border rounded px-3 py-2"
+        >
+          <option [ngValue]="true">نعم</option>
+          <option [ngValue]="false">لا</option>
+        </select>
+      </label>
+
+      <label class="block">
+        <span class="font-semibold">الحالة</span>
+        <select
+          formControlName="status"
+          class="mt-1 w-full border rounded px-3 py-2"
+        >
+          <option [ngValue]="1">فعال</option>
+          <option [ngValue]="0">غير فعال</option>
+        </select>
+      </label>
+
+      <div class="flex justify-center gap-3 pt-2">
+        <button
+          type="button"
+          (click)="onSave()"
+          class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80"
+        >
+          حفظ
+        </button>
+        <button
+          type="button"
+          (click)="onClose()"
+          class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300"
+        >
+          إغلاق
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -14,6 +14,8 @@ import {
 } from '../../services/employee-search.service';
 import { Observable, forkJoin, of, switchMap } from 'rxjs';
 import { AttendanceModalComponent } from './components/attendance-modal/attendance-modal.component';
+import { EditUserModalComponent } from './components/edit-user-modal/edit-user-modal.component';
+import { EditSquareComponent } from '../../../assets/SVG/editSVG.component';
 
 interface SearchForm {
   query: string;
@@ -43,7 +45,13 @@ interface EmployeeVM {
 @Component({
   selector: 'app-users-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AttendanceModalComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    AttendanceModalComponent,
+    EditUserModalComponent,
+    EditSquareComponent,
+  ],
   templateUrl: './users-search.component.html',
 })
 export class UsersSearchComponent {
@@ -56,6 +64,7 @@ export class UsersSearchComponent {
   hasSearched = false;
   selectedEmpNo: number | null = null;
   isAttendanceVisible = false;
+  isEditVisible = false;
 
   constructor(private fb: FormBuilder, private svc: EmployeeSearchService) {
     this.form = this.fb.group({
@@ -398,5 +407,32 @@ export class UsersSearchComponent {
 
   closeAttendance() {
     this.isAttendanceVisible = false;
+  }
+
+  openEdit() {
+    this.isEditVisible = true;
+  }
+
+  closeEdit() {
+    this.isEditVisible = false;
+  }
+
+  onSaveEdit(payload: {
+    empNo: number | null;
+    fingerCode: number | null;
+    timingCode: number | null;
+    hasAllow: boolean | null;
+    status: number | null;
+  }) {
+    // TODO: call backend update endpoint when available; update local vm for now
+    if (!this.vm) return;
+    this.vm = {
+      ...this.vm,
+      fingerCode: payload.fingerCode ?? this.vm.fingerCode ?? null,
+      timingCode: payload.timingCode ?? this.vm.timingCode ?? null,
+      hasAllow: payload.hasAllow ?? this.vm.hasAllow ?? null,
+      status: payload.status ?? this.vm.status ?? null,
+    } as any;
+    this.isEditVisible = false;
   }
 }

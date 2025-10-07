@@ -112,6 +112,19 @@ export class EmployeeSearchService {
   getTimingPlans(): Observable<TimingPlanDto[]> {
     return this.http.get<TimingPlanDto[]>(API.TIMING_PLANS.GET_ALL);
   }
+
+  // Update employee editable fields
+  updateEmployee(
+    empNo: number,
+    body: {
+      fingerCode?: number | null;
+      timingCode?: number | null;
+      hasAllow?: boolean | null;
+      status?: number | null;
+    }
+  ) {
+    return this.http.put(API.EMPLOYEES.UPDATE(empNo), body);
+  }
 }
 
 interface Department {

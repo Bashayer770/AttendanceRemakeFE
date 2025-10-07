@@ -16,7 +16,7 @@ import { Observable, forkJoin, of, switchMap } from 'rxjs';
 import { AttendanceModalComponent } from './components/attendance-modal/attendance-modal.component';
 import { EditUserModalComponent } from './components/edit-user-modal/edit-user-modal.component';
 import { EditSquareComponent } from '../../../assets/SVG/editSVG.component';
-import { API } from '../../../../../environments/api';
+import { API } from '../../services/index';
 
 interface SearchForm {
   query: string;
@@ -434,15 +434,20 @@ export class UsersSearchComponent {
       status: payload.status,
     };
 
-    this.svc.http.put(API.EMPLOYEES.UPDATE(payload.empNo), body).subscribe({
+    this.svc.updateEmployee(payload.empNo, body).subscribe({
       next: () => {
+        if (!this.vm) {
+          this.isEditVisible = false;
+          return;
+        }
+        const prev = this.vm as EmployeeVM;
         this.vm = {
-          ...this.vm,
-          fingerCode: payload.fingerCode ?? this.vm.fingerCode ?? null,
-          timingCode: payload.timingCode ?? this.vm.timingCode ?? null,
-          hasAllow: payload.hasAllow ?? this.vm.hasAllow ?? null,
-          status: payload.status ?? this.vm.status ?? null,
-        } as any;
+          ...prev,
+          fingerCode: payload.fingerCode ?? prev.fingerCode ?? null,
+          timingCode: payload.timingCode ?? prev.timingCode ?? null,
+          hasAllow: payload.hasAllow ?? prev.hasAllow ?? null,
+          status: payload.status ?? prev.status ?? null,
+        } as EmployeeVM;
         this.isEditVisible = false;
       },
       error: () => {

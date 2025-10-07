@@ -48,7 +48,16 @@
           class="bg-white border rounded-xl shadow p-5 min-h-[260px]"
           dir="rtl"
         >
-          <h3 class="text-xl font-semibold mb-3">تفاصيل الموظف</h3>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-semibold m-0">تفاصيل الموظف</h3>
+            <button
+              type="button"
+              class="px-3 py-2 border rounded hover:bg-primary/10 text-primary border-primary"
+              (click)="openEdit()"
+            >
+              <app-edit-square></app-edit-square>
+            </button>
+          </div>
           <ng-container *ngIf="vm as d; else noDetails">
             <div class="space-y-2 text-gray-800">
               <div class="flex items-center gap-2">
@@ -113,13 +122,6 @@
                 (click)="openAttendance()"
               >
                 كشف الحضور
-              </button>
-              <button
-                type="button"
-                class="px-3 py-2 border rounded hover:bg-gray-50"
-                (click)="openEdit()"
-              >
-                <app-edit-square></app-edit-square>
               </button>
             </div>
             <app-attendance-modal

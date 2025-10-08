@@ -441,14 +441,31 @@ export class UsersSearchComponent {
           return;
         }
         const prev = this.vm as EmployeeVM;
+        const newTiming = payload.timingCode ?? prev.timingCode ?? null;
         this.vm = {
           ...prev,
           fingerCode: payload.fingerCode ?? prev.fingerCode ?? null,
-          timingCode: payload.timingCode ?? prev.timingCode ?? null,
+          timingCode: newTiming,
           hasAllow: payload.hasAllow ?? prev.hasAllow ?? null,
           status: payload.status ?? prev.status ?? null,
         } as EmployeeVM;
-        this.isEditVisible = false;
+
+        if (newTiming != null) {
+          this.svc.getTimingPlanByCode(newTiming).subscribe({
+            next: (tp) => {
+              this.vm = {
+                ...(this.vm as EmployeeVM),
+                timingPlanName: tp?.descA ?? null,
+              } as EmployeeVM;
+              this.isEditVisible = false;
+            },
+            error: () => {
+              this.isEditVisible = false;
+            },
+          });
+        } else {
+          this.isEditVisible = false;
+        }
       },
       error: () => {
         // keep modal open or close as per UX; closing for now
